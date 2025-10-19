@@ -6,12 +6,14 @@ import nextI18NextConfig from '../next-i18next.config.js';
 import heCommon from '../public/locales/he/common.json';
 import enCommon from '../public/locales/en/common.json';
 import trCommon from '../public/locales/tr/common.json';
+import arCommon from '../public/locales/ar/common.json';
 
 const isBrowser = typeof window !== 'undefined';
 const resources: Resource = {
   he: { common: heCommon },
   en: { common: enCommon },
   tr: { common: trCommon },
+  ar: { common: arCommon },
 };
 
 if (!i18n.isInitialized) {

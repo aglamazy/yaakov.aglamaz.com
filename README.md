@@ -20,6 +20,6 @@ The app exposes this value via Next.js metadata in `src/app/layout.tsx`. Do not 
 
 ## Structure
 
-- Public side: `/` renders a minimal page that outputs the `t('example.publicLabel')` string (`src/examples/public/PublicPage.tsx`).
+- Public side: `/` renders a mobile-first, snap-scrolling portfolio sampler powered by i18n placeholders (`src/examples/public/PublicPage.tsx`).
 - Private side: `/app` requires authentication and renders a sweepable view with red, green, and blue placeholders (`src/examples/private/SweepableExample.tsx`).
 - Supporting pieces: Firebase auth/session helpers, JWT utilities, and site configuration are intact for reuse.

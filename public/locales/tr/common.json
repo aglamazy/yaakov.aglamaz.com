@@ -18,7 +18,49 @@
   "pendingApprovalStatus": "Onay Bekliyor",
   "verified": "Doğrulandı",
   "logout": "Çıkış Yap",
-  "example.publicLabel": "PUBLIC",
+  "publicPortfolio": {
+    "heroTitle": "Lorem ipsum",
+    "heroSubtitle": "Dolor sit amet, consectetur adipiscing elit.",
+    "heroCta": "Keşfetmeye başla",
+    "aboutTitle": "Hakkında",
+    "aboutBody": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor.",
+    "skillsTitle": "Yetenekler",
+    "skillsBody": "Praesent commodo cursus magna, vel scelerisque nisl consectetur et.",
+    "projectsTitle": "Projeler",
+    "projectsBody": "Integer posuere erat a ante venenatis dapibus posuere velit aliquet.",
+    "contactTitle": "İletişim",
+    "contactBody": "Curabitur blandit tempus porttitor. Donec sed odio dui.",
+    "contactCta": "İletişime geç",
+    "indicatorLabel": "Portföy bölümleri",
+    "swipeHint": "Kaydır",
+    "language": {
+      "en": "EN",
+      "he": "עב",
+      "tr": "TR",
+      "ar": "AR"
+    },
+    "languageSwitcherLabel": "Dili değiştir",
+    "skillsList": [
+      "Lorem 01",
+      "Lorem 02",
+      "Lorem 03",
+      "Lorem 04"
+    ],
+    "projectsList": [
+      {
+        "title": "Proje Bir",
+        "summary": "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+      },
+      {
+        "title": "Proje İki",
+        "summary": "Integer posuere erat a ante venenatis dapibus posuere velit aliquet."
+      },
+      {
+        "title": "Proje Üç",
+        "summary": "Praesent commodo cursus magna, vel scelerisque nisl consectetur et."
+      }
+    ]
+  },
   "example.sweep.indicatorLabel": "Örnek bölümler",
   "example.sweep.redLabel": "RED",
   "example.sweep.greenLabel": "GREEN",

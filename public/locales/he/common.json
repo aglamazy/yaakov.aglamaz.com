@@ -4,7 +4,49 @@
   "pendingApprovalNotify": "תקבל הודעה כאשר הבקשה תאושר.",
   "contactUs": "צור קשר",
   "logout": "התנתק",
-  "example.publicLabel": "PUBLIC",
+  "publicPortfolio": {
+    "heroTitle": "לורם איפסום",
+    "heroSubtitle": "דולור סיט אמט, קונסקטטור אדיפיסינג אלית.",
+    "heroCta": "התחילו לגלות",
+    "aboutTitle": "אודות",
+    "aboutBody": "לורם איפסום דולור סיט אמט, קונסקטטור אדיפיסינג אלית, סד דו eiusmod tempor.",
+    "skillsTitle": "כישורים",
+    "skillsBody": "פרזנט קומודו קורוס מגנה, ול סקלריסק ניסל קונסקטטור את.",
+    "projectsTitle": "פרויקטים",
+    "projectsBody": "אינטגר פוסוארה ארת אה אנטה וננטיס דאפיבוס פוסוארה ולית עליהט.",
+    "contactTitle": "צור קשר",
+    "contactBody": "קוראביטור בלנדיט טמפוס פורטיטור. דונק סד אודיו דואי.",
+    "contactCta": "צור קשר",
+    "indicatorLabel": "קטעי פורטפוליו",
+    "swipeHint": "החלקה",
+    "language": {
+      "en": "EN",
+      "he": "עב",
+      "tr": "TR",
+      "ar": "عر"
+    },
+    "languageSwitcherLabel": "החלפת שפה",
+    "skillsList": [
+      "לורם 01",
+      "לורם 02",
+      "לורם 03",
+      "לורם 04"
+    ],
+    "projectsList": [
+      {
+        "title": "פרויקט אחד",
+        "summary": "לורם איפסום דולור סיט אמט, קונסקטטור אדיפיסינג אלית."
+      },
+      {
+        "title": "פרויקט שתיים",
+        "summary": "אינטגר פוסוארה ארת אה אנטה וננטיס דאפיבוס פוסוארה ולית עליהט."
+      },
+      {
+        "title": "פרויקט שלוש",
+        "summary": "פרזנט קומודו קורוס מגנה, ול סקלריסק ניסל קונסקטטור את."
+      }
+    ]
+  },
   "example.sweep.indicatorLabel": "קטעים לדוגמה",
   "example.sweep.redLabel": "RED",
   "example.sweep.greenLabel": "GREEN",

@@ -4,7 +4,49 @@
   "pendingApprovalNotify": "You will be notified when your request is approved.",
   "contactUs": "Contact Us",
   "logout": "Logout",
-  "example.publicLabel": "PUBLIC",
+  "publicPortfolio": {
+    "heroTitle": "Lorem ipsum",
+    "heroSubtitle": "Dolor sit amet, consectetur adipiscing elit.",
+    "heroCta": "Start exploring",
+    "aboutTitle": "About",
+    "aboutBody": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor.",
+    "skillsTitle": "Skills",
+    "skillsBody": "Praesent commodo cursus magna, vel scelerisque nisl consectetur et.",
+    "projectsTitle": "Projects",
+    "projectsBody": "Integer posuere erat a ante venenatis dapibus posuere velit aliquet.",
+    "contactTitle": "Contact",
+    "contactBody": "Curabitur blandit tempus porttitor. Donec sed odio dui.",
+    "contactCta": "Get in touch",
+    "indicatorLabel": "Portfolio sections",
+    "swipeHint": "Swipe",
+    "language": {
+      "en": "EN",
+      "he": "עב",
+      "tr": "TR",
+      "ar": "AR"
+    },
+    "languageSwitcherLabel": "Toggle language",
+    "skillsList": [
+      "Lorem 01",
+      "Lorem 02",
+      "Lorem 03",
+      "Lorem 04"
+    ],
+    "projectsList": [
+      {
+        "title": "Project One",
+        "summary": "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+      },
+      {
+        "title": "Project Two",
+        "summary": "Integer posuere erat a ante venenatis dapibus posuere velit aliquet."
+      },
+      {
+        "title": "Project Three",
+        "summary": "Praesent commodo cursus magna, vel scelerisque nisl consectetur et."
+      }
+    ]
+  },
   "example.sweep.indicatorLabel": "Example sections",
   "example.sweep.redLabel": "RED",
   "example.sweep.greenLabel": "GREEN",
