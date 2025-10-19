@@ -2,7 +2,6 @@
 Use one layout for all pages. Header on top and then content.
 # Development cycle
 For now don't use tests.
-After task completion run npx tsc and fix errors
 On major change (refactoring) run npx next build and fix errors.
 # Errors
 ✅ Handle local side effects (e.g. set loading=false, set error message in state).
