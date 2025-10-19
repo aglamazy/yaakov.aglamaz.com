@@ -1,0 +1,66 @@
+
+.container {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  width: 100%;
+  overflow: hidden;
+}
+
+.swipeViewport {
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+}
+
+.slideWrapper {
+  width: 100%;
+  min-height: 100vh;
+  height: 100%;
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.swipeSlide {
+  min-height: 100vh;
+  height: 100%;
+  width: 100%;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.slideContent {
+  flex: 1;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.swipeIndicators {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 0;
+}
+
+.indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 9999px;
+  border: none;
+  background: var(--sage-300);
+  cursor: pointer;
+}
+
+.indicatorActive {
+  background: var(--sage-600);
+}

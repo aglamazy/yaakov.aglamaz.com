@@ -1,0 +1,509 @@
+.imagesGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.5rem;
+}
+
+@media (min-width: 768px) {
+  .imagesGrid { grid-template-columns: repeat(3, 1fr); }
+}
+
+.thumbWrap { position: relative; }
+
+.thumb {
+  width: 100%;
+  height: 10rem;
+  object-fit: cover;
+  border-radius: 0.5rem;
+  cursor: pointer;
+}
+
+.likeBtn {
+  position: absolute;
+  right: 0.4rem;
+  bottom: 0.4rem;
+  background: rgba(0,0,0,0.5);
+  color: #fff;
+  padding: 0.15rem 0.4rem;
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.likeBtnLiked { background: rgba(220, 38, 38, 0.85); }
+
+.lightboxBackdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+}
+
+.lightboxImg {
+  max-width: 90vw;
+  max-height: 85vh;
+  border-radius: 0.5rem;
+}
+
+.navBtn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0,0,0,0.6);
+  color: #fff;
+  border-radius: 9999px;
+  padding: 0.5rem 0.7rem;
+}
+.navLeft { left: 1rem; }
+.navRight { right: 1rem; }
+
+.titleBadge {
+  position: absolute;
+  left: 50%;
+  top: 0.5rem;
+  transform: translateX(-50%);
+  background: rgba(255,255,255,0.9);
+  color: #1f2937; /* gray-800 */
+  padding: 0.15rem 0.5rem;
+  border-radius: 0.375rem;
+  font-size: 0.75rem;
+  max-width: 90%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: center;
+}
+
+.titleBadgeButton {
+  border: none;
+  background: rgba(255,255,255,0.9);
+  cursor: pointer;
+}
+
+.titleBadgeButton:focus-visible {
+  outline: 2px solid #2563eb;
+  outline-offset: 2px;
+}
+
+.mobileViewer {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  min-height: 60vh;
+  padding-bottom: 4rem;
+}
+
+@media (max-width: 767px) {
+  .mobileViewer {
+    margin-left: -1rem;
+    margin-right: -1rem;
+  }
+}
+
+.mobileImageWrap {
+  position: relative;
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  touch-action: none;
+  min-height: 60vh;
+  border-radius: 0;
+}
+
+.mobileImage {
+  width: 100%;
+  height: auto;
+  max-height: calc(100vh - 8rem);
+  object-fit: contain;
+  background: #000;
+  border-radius: 0;
+}
+
+.mobileTitle {
+  position: absolute;
+  top: 0.75rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(17,24,39,0.6);
+  color: #f9fafb;
+  padding: 0.4rem 1rem;
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  max-width: 90%;
+  text-align: center;
+  backdrop-filter: blur(2px);
+}
+
+.mobileTitleButton {
+  border: none;
+  background: rgba(17,24,39,0.6);
+  cursor: pointer;
+}
+
+.mobileTitleButton:focus-visible {
+  outline: 2px solid #f9fafb;
+  outline-offset: 2px;
+}
+
+.mobileLikeBadge {
+  position: absolute;
+  bottom: 1rem;
+  right: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.75rem;
+  border-radius: 9999px;
+  background: rgba(0,0,0,0.6);
+  color: #fff;
+  font-size: 0.95rem;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+}
+
+.mobileLikeBadgeRaised {
+  bottom: 4.25rem;
+}
+
+.mobileLikeBadgeLiked {
+  background: rgba(220, 38, 38, 0.85);
+}
+
+.mobileHint {
+  position: absolute;
+  left: 50%;
+  bottom: 1.5rem;
+  transform: translateX(-50%);
+  background: rgba(17,24,39,0.92);
+  color: #f9fafb;
+  padding: 1rem;
+  border-radius: 0.75rem;
+  width: calc(100% - 3rem);
+  max-width: 20rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.35);
+}
+
+.mobileHint p {
+  margin: 0;
+  font-size: 0.875rem;
+  line-height: 1.3;
+}
+
+.mobileHint button {
+  align-self: center;
+  background: rgba(255,255,255,0.12);
+  color: #f9fafb;
+  padding: 0.35rem 0.85rem;
+  border-radius: 9999px;
+  font-size: 0.85rem;
+  border: none;
+  cursor: pointer;
+}
+
+.mobileHint button:focus-visible {
+  outline: 2px solid rgba(255,255,255,0.6);
+  outline-offset: 2px;
+}
+
+.presentationOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(135deg, rgba(253, 249, 244, 0.98), rgba(232, 240, 234, 0.98));
+  color: #111827;
+}
+
+.presentationTopBar {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  backdrop-filter: blur(12px);
+  background: rgba(255, 255, 255, 0.75);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+.presentationBackBtn {
+  background: none;
+  border: none;
+  padding: 0.35rem;
+  cursor: pointer;
+}
+
+.presentationBackIcon {
+  display: inline-block;
+  width: 0.75rem;
+  height: 0.75rem;
+  border-left: 2px solid #111827;
+  border-bottom: 2px solid #111827;
+  transform: rotate(45deg);
+  margin-left: 0.2rem;
+}
+
+:global([dir='rtl']) .presentationBackIcon {
+  transform: rotate(-135deg);
+  margin-left: 0;
+  margin-right: 0.2rem;
+}
+
+.presentationList {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1rem 1rem 2.5rem;
+}
+
+.presentationItem {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin-bottom: 1.75rem;
+}
+
+.presentationTitle {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1f2937;
+  padding: 0 0.25rem;
+}
+
+.presentationTitleButton {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  padding: 0 0.25rem;
+}
+
+.presentationTitleButton:focus-visible {
+  outline: 2px solid #2563eb;
+  outline-offset: 2px;
+}
+
+.presentationImageWrap {
+  position: relative;
+  border-radius: 1rem;
+  overflow: hidden;
+  background: #0f172a;
+  box-shadow: 0 12px 35px rgba(15, 23, 42, 0.25);
+}
+
+.presentationImg {
+  width: 100%;
+  height: auto;
+  display: block;
+  cursor: pointer;
+}
+
+.presentationLikeBadge {
+  position: absolute;
+  bottom: 1rem;
+  right: 1rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.4rem 0.85rem;
+  border-radius: 9999px;
+  background: rgba(17, 24, 39, 0.75);
+  color: #f9fafb;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.presentationLikeBadgeLiked {
+  background: rgba(220, 38, 38, 0.85);
+}
+
+.mobileContinuousPlaceholder {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  width: 100%;
+  padding: 1rem 0 2rem;
+}
+
+.mobileContinuousContainer {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  flex: 1;
+  align-self: stretch;
+  padding: 0;
+}
+
+.mobileContinuousList {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: 0;
+}
+
+.mobileContinuousItem {
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 0;
+  box-shadow: 0 10px 25px rgba(17, 24, 39, 0.08);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.mobileMetaRow {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.25rem 1rem 0.35rem;
+}
+
+.mobileAuthorAvatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: linear-gradient(135deg, #d1d5db, #9ca3af);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mobileAuthorAvatarImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.mobileAuthorInfo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+  flex: 1;
+}
+
+.mobileAuthorName {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #111827;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mobileEventHeader {
+  padding: 0.85rem 1.25rem 0.3rem;
+  font-weight: 600;
+  font-size: 1rem;
+  color: #1f2937;
+  background: rgba(17, 24, 39, 0.03);
+}
+
+.mobileEventHeaderButton {
+  border: none;
+  background: transparent;
+  width: 100%;
+  cursor: pointer;
+  padding: 0;
+}
+
+.mobileEventHeaderButton:focus-visible {
+  outline: 2px solid #2563eb;
+  outline-offset: 2px;
+}
+
+.mobileContinuousTitle {
+  color: #4b5563;
+  font-size: 0.85rem;
+  line-height: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+}
+
+.mobileContinuousImageWrap {
+  position: relative;
+  background: #111827;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  border-radius: 0;
+}
+
+.mobileContinuousImageWrapLoading {
+  background: rgba(17, 24, 39, 0.85);
+}
+
+
+.mobileContinuousImage {
+  width: 100%;
+  height: auto;
+  opacity: 1;
+  transition: opacity 0.4s ease;
+}
+
+.mobileContinuousImageHidden {
+  opacity: 0;
+}
+
+.mobileContinuousImageVisible {
+  opacity: 1;
+}
+
+.mobileShimmer {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(90deg, rgba(229, 231, 235, 0.1) 0%, rgba(229, 231, 235, 0.35) 40%, rgba(229, 231, 235, 0.1) 80%);
+  background-size: 200% 100%;
+  animation: mobileSkeletonWave 1.6s linear infinite;
+}
+
+.mobileContinuousLike {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  align-self: flex-end;
+  margin: 0.25rem 1rem 0;
+  padding: 0.28rem 0.75rem;
+  border-radius: 9999px;
+  border: none;
+  font-size: 0.95rem;
+  font-weight: 600;
+  background: rgba(17, 24, 39, 0.08);
+  color: var(--sage-700);
+}
+
+.mobileContinuousLikeActive {
+  background: rgba(220, 38, 38, 0.12);
+  color: #dc2626;
+}
+
+.mobileContinuousLikePlaceholder {
+  align-self: flex-end;
+  margin: 0.75rem 1.25rem 1.15rem;
+  width: 96px;
+  height: 32px;
+  border-radius: 9999px;
+  background: linear-gradient(90deg, rgba(229, 231, 235, 0.25) 0%, rgba(209, 213, 219, 0.55) 50%, rgba(229, 231, 235, 0.25) 100%);
+  background-size: 200% 100%;
+  animation: mobileSkeletonWave 1.6s linear infinite;
+}
+
+@keyframes mobileSkeletonWave {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}

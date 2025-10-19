@@ -1,0 +1,65 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Language Menu Styles */
+.language-menu {
+  position: absolute;
+  margin-top: 0.5rem;
+  width: 6rem;
+  border-radius: 0.375rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  background-color: white;
+  z-index: 50;
+}
+.language-menu.ltr {
+  right: 0;
+}
+.language-menu.rtl {
+  left: 0;
+}
+.language-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  transition: background-color 0.2s;
+}
+.language-menu-item:hover {
+  background-color: #f3f4f6;
+}
+.language-menu-item.font-bold {
+  font-weight: bold;
+}
+
+/* Theme variables and utility classes */
+:root {
+  --cream-50: #FEFCF8;
+  --cream-100: #FDF8F0;
+  --sage-50: #F7F8F6;
+  --sage-100: #E8EBE6;
+  --sage-200: #D1D8CC;
+  --sage-300: #A8B5A0;
+  --sage-400: #8B9A7B;
+  --sage-500: #6B7A5E;
+  --sage-600: #566249;
+  --sage-700: #454F3B;
+  --sage-800: #373F2F;
+  --sage-900: #2C3E36;
+  --charcoal: #2C3E36;
+}
+
+.bg-cream-50 { background-color: var(--cream-50); }
+.bg-cream-100 { background-color: var(--cream-100); }
+.bg-sage-50 { background-color: var(--sage-50); }
+.bg-sage-100 { background-color: var(--sage-100); }
+.bg-sage-600 { background-color: var(--sage-600); }
+.bg-sage-700 { background-color: var(--sage-700); }
+.text-sage-600 { color: var(--sage-600); }
+.text-sage-700 { color: var(--sage-700); }
+.text-charcoal { color: var(--charcoal); }
+.border-sage-200 { border-color: var(--sage-200); }
+.border-sage-600 { border-color: var(--sage-600); }
+.hover\:bg-sage-700:hover { background-color: var(--sage-700); }
+.hover\:border-sage-300:hover { border-color: var(--sage-300); }
