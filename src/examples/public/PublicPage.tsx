@@ -44,11 +44,25 @@ const SECTION_CONFIG: SectionConfig[] = [
 const LANGUAGES = ['he', 'en', 'tr', 'ar'] as const;
 const RTL_LANGS = new Set(['he', 'ar']);
 
-const HERO_BLOB_BASES = [
-  { x: 20, y: 20, strength: 1.05 },
-  { x: 80, y: 15, strength: 0.9 },
-  { x: 60, y: 70, strength: 1.1 },
-  { x: 32, y: 82, strength: 0.85 },
+type BubbleConfig = {
+  size: number;
+  left: number;
+  top: number;
+  driftX: number;
+  driftY: number;
+  duration: number;
+  delay: number;
+};
+
+const HERO_BUBBLES: BubbleConfig[] = [
+  { size: 14, left: 18, top: 32, driftX: 22, driftY: 26, duration: 8, delay: 0 },
+  { size: 18, left: 32, top: 58, driftX: -18, driftY: 32, duration: 11, delay: 1.2 },
+  { size: 12, left: 46, top: 24, driftX: 16, driftY: 22, duration: 7.5, delay: 0.6 },
+  { size: 24, left: 64, top: 68, driftX: -26, driftY: 34, duration: 12, delay: 0.8 },
+  { size: 16, left: 78, top: 38, driftX: 18, driftY: 28, duration: 9, delay: 1.6 },
+  { size: 10, left: 52, top: 52, driftX: -12, driftY: 18, duration: 6.5, delay: 2 },
+  { size: 20, left: 26, top: 72, driftX: 20, driftY: 30, duration: 10, delay: 0.3 },
+  { size: 13, left: 70, top: 22, driftX: -16, driftY: 20, duration: 7.8, delay: 1 },
 ];
 
 const clamp = (value: number, min: number, max: number) => Math.min(Math.max(value, min), max);
@@ -61,7 +75,7 @@ interface PublicPageProps {
 export default function PublicPage({ heroTitle, heroSubtitle }: PublicPageProps) {
   const { t, i18n } = useTranslation();
   const scrollRef = useRef<HTMLDivElement | null>(null);
-  const sectionRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const sectionRefs = useRef<(HTMLElement | null)[]>([]);
   const heroSectionRef = useRef<HTMLElement | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const [indicatorReady, setIndicatorReady] = useState(false);
@@ -98,7 +112,7 @@ export default function PublicPage({ heroTitle, heroSubtitle }: PublicPageProps)
     clearHideTimer();
     hideTimerRef.current = window.setTimeout(() => {
       setIndicatorVisible(false);
-    }, 2000);
+    }, 2000) as unknown as ReturnType<typeof setTimeout>;
   }, [clearHideTimer]);
 
   const activateIndicator = useCallback(
@@ -218,7 +232,7 @@ export default function PublicPage({ heroTitle, heroSubtitle }: PublicPageProps)
     }
     languageFadeTimerRef.current = window.setTimeout(() => {
       setLanguageTransitioning(false);
-    }, 320);
+    }, 320) as unknown as ReturnType<typeof setTimeout>;
   }, []);
 
   const handleLanguageToggle = useCallback(() => {
@@ -262,23 +276,16 @@ export default function PublicPage({ heroTitle, heroSubtitle }: PublicPageProps)
       targetInfluence: 0,
     };
 
-    const setBlobPositions = () => {
+    const setGlowPositions = () => {
       state.x += (state.targetX - state.x) * 0.08;
       state.y += (state.targetY - state.y) * 0.08;
       state.influence += (state.targetInfluence - state.influence) * 0.08;
 
-      const offsetX = ((state.x - 50) / 50) * (3 + state.influence * 4);
-      const offsetY = ((state.y - 50) / 50) * (3 + state.influence * 4);
+      hero.style.setProperty('--glow-x', `${clamp(state.x, 0, 100)}%`);
+      hero.style.setProperty('--glow-y', `${clamp(state.y, 0, 100)}%`);
+      hero.style.setProperty('--glow-opacity', (0.28 + state.influence * 0.55).toFixed(3));
 
-      HERO_BLOB_BASES.forEach((base, index) => {
-        const finalX = clamp(base.x + offsetX * base.strength, 0, 100);
-        const finalY = clamp(base.y + offsetY * base.strength, 0, 100);
-
-        hero.style.setProperty(`--blob${index + 1}-x`, `${finalX}%`);
-        hero.style.setProperty(`--blob${index + 1}-y`, `${finalY}%`);
-      });
-
-      animationFrame = requestAnimationFrame(setBlobPositions);
+      animationFrame = requestAnimationFrame(setGlowPositions);
     };
 
     const updatePointer = (event: { clientX: number; clientY: number }) => {
@@ -294,7 +301,7 @@ export default function PublicPage({ heroTitle, heroSubtitle }: PublicPageProps)
 
       state.targetX = relativeX;
       state.targetY = relativeY;
-      state.targetInfluence = Math.min(distance / 200, 1);
+      state.targetInfluence = Math.min(distance / 220, 1);
     };
 
     const resetPointer = () => {
@@ -303,7 +310,7 @@ export default function PublicPage({ heroTitle, heroSubtitle }: PublicPageProps)
       state.targetInfluence = 0;
     };
 
-    animationFrame = requestAnimationFrame(setBlobPositions);
+    animationFrame = requestAnimationFrame(setGlowPositions);
 
     const handlePointerMove = (event: PointerEvent) => {
       updatePointer(event);
@@ -402,6 +409,27 @@ export default function PublicPage({ heroTitle, heroSubtitle }: PublicPageProps)
               id={section.id}
               data-section-id={section.id}
             >
+              {isHero ? (
+                <div className={styles.bubbleField} aria-hidden="true">
+                  {HERO_BUBBLES.map((bubble, bubbleIndex) => (
+                    <span
+                      key={`${bubble.left}-${bubble.top}-${bubbleIndex}`}
+                      className={styles.bubble}
+                      style={
+                        {
+                          '--bubble-size': `${bubble.size}px`,
+                          '--bubble-left': `${bubble.left}%`,
+                          '--bubble-top': `${bubble.top}%`,
+                          '--bubble-drift-x': `${bubble.driftX}px`,
+                          '--bubble-drift-y': `${bubble.driftY}px`,
+                          '--bubble-duration': `${bubble.duration}s`,
+                          '--bubble-delay': `${bubble.delay}s`,
+                        } as CSSProperties
+                      }
+                    />
+                  ))}
+                </div>
+              ) : null}
               <div className={styles.sectionInner}>
                 <h2 className={index === 0 ? styles.heroTitle : styles.sectionTitle}>{title}</h2>
                 <p className={styles.sectionBody}>{body}</p>
