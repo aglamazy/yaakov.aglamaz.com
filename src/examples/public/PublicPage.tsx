@@ -45,11 +45,13 @@ const LANGUAGES = ['he', 'en', 'tr', 'ar'] as const;
 const RTL_LANGS = new Set(['he', 'ar']);
 
 const HERO_BLOB_BASES = [
-  { x: 20, y: 20, strength: 1.05 },
-  { x: 80, y: 15, strength: 0.9 },
-  { x: 60, y: 70, strength: 1.1 },
-  { x: 32, y: 82, strength: 0.85 },
+  { x: 18, y: 22, strength: 1.1 },
+  { x: 78, y: 12, strength: 0.95 },
+  { x: 58, y: 68, strength: 1.15 },
+  { x: 30, y: 82, strength: 0.9 },
 ];
+
+const HERO_BUBBLE_COUNT = 24;
 
 const clamp = (value: number, min: number, max: number) => Math.min(Math.max(value, min), max);
 
@@ -211,6 +213,19 @@ export default function PublicPage({ heroTitle, heroSubtitle }: PublicPageProps)
   }, [normalizedLanguage]);
 
   const currentLanguageLabel = languageLabels[normalizedLanguage] || normalizedLanguage.toUpperCase();
+
+  const heroBubbleConfigs = useMemo(
+    () =>
+      Array.from({ length: HERO_BUBBLE_COUNT }, (_, index) => ({
+        size: 14 + ((index * 7) % 9),
+        duration: 11 + ((index * 5) % 7),
+        delay: -((index % 8) * 0.75),
+        startX: (index * 37) % 100,
+        startY: (index * 19) % 100,
+        drift: 18 + ((index * 11) % 16),
+      })),
+    [],
+  );
 
   const scheduleLanguageFadeReset = useCallback(() => {
     if (languageFadeTimerRef.current) {
@@ -388,6 +403,8 @@ export default function PublicPage({ heroTitle, heroSubtitle }: PublicPageProps)
           const body = isHero && heroSubtitle ? heroSubtitle : t(section.bodyKey);
           const cta = section.ctaKey ? t(section.ctaKey) : null;
           const sectionClass = `${styles.section} ${styles[section.id] ?? ''}`;
+          const sectionInnerClass = `${styles.sectionInner} ${isHero ? styles.heroInner : ''}`;
+          const sectionBodyClass = `${styles.sectionBody} ${isHero ? styles.heroBody : ''}`;
 
           return (
             <section
@@ -402,9 +419,37 @@ export default function PublicPage({ heroTitle, heroSubtitle }: PublicPageProps)
               id={section.id}
               data-section-id={section.id}
             >
-              <div className={styles.sectionInner}>
+              {isHero ? (
+                <>
+                  <div className={styles.heroScene} aria-hidden="true">
+                    <div className={styles.heroCanopy} />
+                    <div className={styles.heroTrunk} />
+                    <div className={styles.heroGlow} />
+                  </div>
+                  <div className={styles.ambientBubbles} aria-hidden="true">
+                    {heroBubbleConfigs.map((config, bubbleIndex) => (
+                      <span
+                        key={`bubble-${bubbleIndex}`}
+                        className={styles.bubble}
+                        style={
+                          {
+                            '--bubble-size': `${config.size}px`,
+                            '--bubble-duration': `${config.duration}s`,
+                            '--bubble-delay': `${config.delay}s`,
+                            '--bubble-start-x': `${config.startX}%`,
+                            '--bubble-start-y': `${config.startY}%`,
+                            '--bubble-drift': `${config.drift}px`,
+                          } as CSSProperties
+                        }
+                      />
+                    ))}
+                  </div>
+                </>
+              ) : null}
+
+              <div className={sectionInnerClass}>
                 <h2 className={index === 0 ? styles.heroTitle : styles.sectionTitle}>{title}</h2>
-                <p className={styles.sectionBody}>{body}</p>
+                <p className={sectionBodyClass}>{body}</p>
 
                 {section.id === 'skills' ? (
                   <div className={styles.skillBars}>
@@ -433,13 +478,15 @@ export default function PublicPage({ heroTitle, heroSubtitle }: PublicPageProps)
                 ) : null}
 
                 {cta && section.id === 'hero' ? (
-                  <button
-                    type="button"
-                    className={styles.ctaButton}
-                    onClick={() => scrollToIndex(index + 1)}
-                  >
-                    {cta}
-                  </button>
+                  <div className={styles.heroActions}>
+                    <button
+                      type="button"
+                      className={styles.ctaButton}
+                      onClick={() => scrollToIndex(index + 1)}
+                    >
+                      {cta}
+                    </button>
+                  </div>
                 ) : null}
 
                 {cta && section.id === 'contact' ? (
