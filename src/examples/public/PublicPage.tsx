@@ -45,10 +45,23 @@ const LANGUAGES = ['he', 'en', 'tr', 'ar'] as const;
 const RTL_LANGS = new Set(['he', 'ar']);
 
 const HERO_BLOB_BASES = [
-  { x: 20, y: 20, strength: 1.05 },
-  { x: 80, y: 15, strength: 0.9 },
-  { x: 60, y: 70, strength: 1.1 },
-  { x: 32, y: 82, strength: 0.85 },
+  { x: 18, y: 24, strength: 1.05 },
+  { x: 76, y: 18, strength: 0.88 },
+  { x: 58, y: 68, strength: 1.08 },
+  { x: 34, y: 82, strength: 0.82 },
+];
+
+const ORB_CONFIG = [
+  { x: 12, y: 18, size: 18, duration: 28, delay: 0, range: 24 },
+  { x: 28, y: 72, size: 12, duration: 24, delay: 2, range: 28 },
+  { x: 52, y: 38, size: 9, duration: 20, delay: 3.5, range: 22 },
+  { x: 68, y: 84, size: 14, duration: 30, delay: 1, range: 32 },
+  { x: 84, y: 24, size: 10, duration: 26, delay: 4.5, range: 26 },
+  { x: 38, y: 28, size: 7, duration: 18, delay: 6, range: 20 },
+  { x: 58, y: 14, size: 6, duration: 22, delay: 8, range: 18 },
+  { x: 74, y: 54, size: 11, duration: 24, delay: 2.8, range: 24 },
+  { x: 18, y: 56, size: 8, duration: 19, delay: 5.4, range: 20 },
+  { x: 90, y: 68, size: 13, duration: 27, delay: 7.2, range: 30 },
 ];
 
 const clamp = (value: number, min: number, max: number) => Math.min(Math.max(value, min), max);
@@ -61,14 +74,14 @@ interface PublicPageProps {
 export default function PublicPage({ heroTitle, heroSubtitle }: PublicPageProps) {
   const { t, i18n } = useTranslation();
   const scrollRef = useRef<HTMLDivElement | null>(null);
-  const sectionRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const sectionRefs = useRef<(HTMLElement | null)[]>([]);
   const heroSectionRef = useRef<HTMLElement | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const [indicatorReady, setIndicatorReady] = useState(false);
   const [indicatorVisible, setIndicatorVisible] = useState(false);
-  const hideTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const hideTimerRef = useRef<number | null>(null);
   const indicatorLockedRef = useRef(false);
-  const languageFadeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const languageFadeTimerRef = useRef<number | null>(null);
   const [languageTransitioning, setLanguageTransitioning] = useState(false);
 
   const skillsListRaw = t('publicPortfolio.skillsList', { returnObjects: true }) as unknown;
@@ -88,7 +101,7 @@ export default function PublicPage({ heroTitle, heroSubtitle }: PublicPageProps)
 
   const clearHideTimer = useCallback(() => {
     if (hideTimerRef.current) {
-      clearTimeout(hideTimerRef.current);
+      window.clearTimeout(hideTimerRef.current);
       hideTimerRef.current = null;
     }
   }, []);
@@ -214,7 +227,7 @@ export default function PublicPage({ heroTitle, heroSubtitle }: PublicPageProps)
 
   const scheduleLanguageFadeReset = useCallback(() => {
     if (languageFadeTimerRef.current) {
-      clearTimeout(languageFadeTimerRef.current);
+      window.clearTimeout(languageFadeTimerRef.current);
     }
     languageFadeTimerRef.current = window.setTimeout(() => {
       setLanguageTransitioning(false);
@@ -242,7 +255,7 @@ export default function PublicPage({ heroTitle, heroSubtitle }: PublicPageProps)
 
   useEffect(() => () => {
     if (languageFadeTimerRef.current) {
-      clearTimeout(languageFadeTimerRef.current);
+      window.clearTimeout(languageFadeTimerRef.current);
     }
   }, []);
 
@@ -371,6 +384,25 @@ export default function PublicPage({ heroTitle, heroSubtitle }: PublicPageProps)
 
   return (
     <div className={styles.wrapper}>
+      <div className={styles.mossVeil} aria-hidden="true" />
+      <div className={styles.floatingOrbs} aria-hidden="true">
+        {ORB_CONFIG.map((orb, index) => (
+          <span
+            key={`orb-${index}`}
+            className={styles.orb}
+            style={
+              {
+                '--base-x': `${orb.x}%`,
+                '--base-y': `${orb.y}%`,
+                '--orb-size': `${orb.size}vmin`,
+                '--float-duration': `${orb.duration}s`,
+                '--float-delay': `${orb.delay}s`,
+                '--float-range': `${orb.range}vh`,
+              } as CSSProperties
+            }
+          />
+        ))}
+      </div>
       <button
         type="button"
         className={`${styles.languageSwitcher} ${languageTransitioning ? styles.languageSwitcherActive : ''}`}
@@ -388,6 +420,14 @@ export default function PublicPage({ heroTitle, heroSubtitle }: PublicPageProps)
           const body = isHero && heroSubtitle ? heroSubtitle : t(section.bodyKey);
           const cta = section.ctaKey ? t(section.ctaKey) : null;
           const sectionClass = `${styles.section} ${styles[section.id] ?? ''}`;
+          const sectionInnerClass = [
+            styles.sectionInner,
+            isHero ? styles.sectionInnerHero : styles.sectionInnerPane,
+            !isHero && index % 2 === 1 ? styles.sectionInnerRight : '',
+          ]
+            .filter(Boolean)
+            .join(' ');
+          const isActive = index === activeIndex;
 
           return (
             <section
@@ -401,8 +441,9 @@ export default function PublicPage({ heroTitle, heroSubtitle }: PublicPageProps)
               className={sectionClass}
               id={section.id}
               data-section-id={section.id}
+              data-active={isActive}
             >
-              <div className={styles.sectionInner}>
+              <div className={sectionInnerClass}>
                 <h2 className={index === 0 ? styles.heroTitle : styles.sectionTitle}>{title}</h2>
                 <p className={styles.sectionBody}>{body}</p>
 
