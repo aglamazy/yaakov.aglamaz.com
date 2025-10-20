@@ -2,8 +2,39 @@
   position: relative;
   height: 100vh;
   overflow: hidden;
-  background: #031008;
+  background: #010b13;
   color: #edf8f1;
+  isolation: isolate;
+}
+
+.backgroundCanvas {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  --blob1-x: 22%;
+  --blob1-y: 18%;
+  --blob2-x: 78%;
+  --blob2-y: 22%;
+  --blob3-x: 62%;
+  --blob3-y: 70%;
+  --blob4-x: 28%;
+  --blob4-y: 80%;
+  background:
+    radial-gradient(circle at var(--blob1-x) var(--blob1-y), rgba(59, 130, 246, 0.22), transparent 58%),
+    radial-gradient(circle at var(--blob2-x) var(--blob2-y), rgba(147, 51, 234, 0.18), transparent 55%),
+    radial-gradient(circle at var(--blob3-x) var(--blob3-y), rgba(45, 212, 191, 0.2), transparent 52%),
+    radial-gradient(circle at var(--blob4-x) var(--blob4-y), rgba(20, 184, 166, 0.18), transparent 50%),
+    radial-gradient(150% 130% at 50% 50%, rgba(15, 23, 42, 0.55), rgba(2, 6, 23, 0.95));
+  animation: meshDrift 18s ease-in-out infinite alternate;
+}
+
+.backgroundCanvas::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center, rgba(0, 0, 0, 0) 58%, rgba(0, 0, 0, 0.68));
+  mix-blend-mode: multiply;
 }
 
 .languageSwitcher {
@@ -48,32 +79,14 @@
 
 .container {
   position: relative;
+  z-index: 2;
   height: 100%;
   overflow-y: auto;
   scroll-snap-type: y mandatory;
   scroll-behavior: smooth;
-  background: linear-gradient(160deg, #07150e 0%, #0f2818 42%, #17452b 100%);
-  background-image: radial-gradient(120% 140% at 100% 0%, rgba(33, 71, 49, 0.42), transparent 65%),
-    radial-gradient(120% 140% at 0% 100%, rgba(26, 66, 43, 0.32), transparent 60%);
   color: #edf8f1;
-}
-
-.container::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  background-image: repeating-linear-gradient(
-      108deg,
-      rgba(24, 60, 38, 0.32) 0px,
-      rgba(24, 60, 38, 0.32) 18px,
-      rgba(12, 33, 20, 0.45) 18px,
-      rgba(12, 33, 20, 0.45) 36px
-    ),
-    radial-gradient(65% 85% at 30% 20%, rgba(76, 124, 93, 0.18), transparent 72%);
-  mix-blend-mode: soft-light;
-  opacity: 0.7;
-  pointer-events: none;
-  z-index: 0;
+  background: linear-gradient(180deg, rgba(1, 11, 19, 0.1), rgba(1, 11, 19, 0.4));
+  backdrop-filter: blur(4px);
 }
 
 .container::-webkit-scrollbar {
@@ -91,73 +104,26 @@
   scroll-snap-align: start;
   display: flex;
   align-items: center;
-  padding: 5rem 1.5rem 4.5rem;
-  z-index: 1;
-}
-
-.section::before {
-  content: '';
-  position: absolute;
-  inset: clamp(1.6rem, 8vw, 4rem);
-  border-radius: 36px;
-  background: rgba(10, 33, 20, 0.54);
-  border: 1px solid rgba(126, 186, 139, 0.18);
-  box-shadow: 0 35px 95px rgba(4, 20, 11, 0.65);
-  backdrop-filter: blur(24px);
-  pointer-events: none;
-  transition: transform 0.6s ease, opacity 0.6s ease;
-  opacity: 0.95;
-}
-
-.section:hover::before,
-.section:focus-within::before {
-  transform: translateY(-6px);
-  opacity: 1;
+  justify-content: center;
+  padding: clamp(4rem, 10vh, 6rem) 1.5rem;
+  z-index: 2;
 }
 
 .hero {
   justify-content: center;
-  overflow: hidden;
-  --glow-x: 50%;
-  --glow-y: 50%;
-  --glow-opacity: 0.32;
-}
-
-.hero::before {
-  inset: clamp(1.2rem, 7vw, 3.5rem);
-  background: rgba(9, 41, 22, 0.6);
-  border: 1px solid rgba(153, 216, 163, 0.35);
-  box-shadow: 0 45px 110px rgba(4, 16, 8, 0.78);
-  border-radius: 38px;
-  pointer-events: none;
-}
-
-.hero::after {
-  content: '';
-  position: absolute;
-  inset: clamp(1.2rem, 7vw, 3.5rem);
-  border-radius: 40px;
-  background:
-    radial-gradient(
-        360px circle at var(--glow-x) var(--glow-y),
-        rgba(160, 255, 194, var(--glow-opacity)),
-        rgba(31, 83, 53, 0) 60%
-      ),
-    radial-gradient(440px circle at 16% 86%, rgba(73, 167, 113, 0.26), transparent 68%),
-    radial-gradient(520px circle at 84% 18%, rgba(106, 203, 148, 0.2), transparent 70%);
-  mix-blend-mode: screen;
-  opacity: 0.9;
-  pointer-events: none;
-  transition: opacity 0.4s ease;
+  align-items: center;
+  overflow: visible;
 }
 
 .bubbleField {
-  position: absolute;
-  inset: clamp(1.2rem, 7vw, 3.5rem);
-  border-radius: 38px;
+  position: fixed;
+  inset: 0;
+  border-radius: 0;
   overflow: hidden;
   pointer-events: none;
   z-index: 1;
+  mix-blend-mode: screen;
+  opacity: 0.42;
 }
 
 .bubble {
@@ -172,9 +138,10 @@
   background: radial-gradient(circle at 35% 30%, rgba(208, 255, 220, 0.92), rgba(40, 104, 63, 0.45));
   box-shadow: 0 0 20px rgba(142, 230, 172, 0.45);
   filter: drop-shadow(0 0 6px rgba(94, 186, 133, 0.3));
-  animation: bubbleFloat var(--bubble-duration) ease-in-out infinite;
+  animation: bubbleFloat var(--bubble-duration) linear infinite alternate;
   animation-delay: var(--bubble-delay);
-  opacity: 0.75;
+  opacity: 0.62;
+  mix-blend-mode: screen;
 }
 
 .sectionInner {
@@ -186,12 +153,26 @@
   display: flex;
   flex-direction: column;
   gap: 1.2rem;
+  padding: clamp(2rem, 6vw, 3rem);
+  background: rgba(3, 20, 30, 0.36);
+  border-radius: 30px;
+  box-shadow: 0 28px 80px rgba(1, 10, 16, 0.6);
+  border: 1px solid rgba(56, 189, 248, 0.12);
+  backdrop-filter: blur(16px);
 }
 
 .hero .sectionInner {
   align-items: center;
   text-align: center;
   gap: 1.4rem;
+  min-height: clamp(520px, 80vh, 700px);
+  justify-content: flex-start;
+  padding: clamp(3.2rem, 10vh, 4rem) clamp(2.2rem, 7vw, 3.6rem);
+  background: rgba(3, 24, 36, 0.38);
+  border-radius: 32px;
+  box-shadow: 0 35px 85px rgba(1, 12, 18, 0.65);
+  border: 1px solid rgba(59, 130, 246, 0.14);
+  backdrop-filter: blur(18px);
 }
 
 .heroTitle {
@@ -344,10 +325,8 @@
 }
 
 .swipeHint {
-  position: absolute;
-  bottom: clamp(3.4rem, 12vh, 5.6rem);
-  left: 50%;
-  transform: translateX(-50%);
+  margin-top: auto;
+  padding-bottom: clamp(1.8rem, 6vh, 3.4rem);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -358,7 +337,7 @@
   text-transform: uppercase;
   pointer-events: none;
   animation: swipeFade 2.4s ease-in-out infinite;
-  z-index: 2;
+  align-self: center;
 }
 
 .swipeLabel {
@@ -497,26 +476,34 @@
 
 @keyframes bubbleFloat {
   0% {
-    transform: translate3d(0, 0, 0) scale(0.85);
-    opacity: 0.52;
+    transform: translate3d(0, 0, 0) scale(0.9);
+    opacity: 0.55;
   }
-  45% {
-    transform: translate3d(calc(var(--bubble-drift-x) * 0.45), calc(var(--bubble-drift-y) * -0.6), 0) scale(1.12);
-    opacity: 0.95;
+  50% {
+    transform: translate3d(calc(var(--bubble-drift-x) * 0.8), calc(var(--bubble-drift-y) * -0.8), 0) scale(1.08);
+    opacity: 0.96;
   }
   100% {
-    transform: translate3d(calc(var(--bubble-drift-x) * -0.35), calc(var(--bubble-drift-y) * -1.1), 0) scale(0.9);
-    opacity: 0.62;
+    transform: translate3d(calc(var(--bubble-drift-x) * -0.8), calc(var(--bubble-drift-y) * -1), 0) scale(0.92);
+    opacity: 0.7;
+  }
+}
+
+@keyframes meshDrift {
+  0% {
+    transform: scale(1.02) translate3d(-1.2%, 0.9%, 0);
+  }
+  50% {
+    transform: scale(1.05) translate3d(1.4%, -1.1%, 0);
+  }
+  100% {
+    transform: scale(1.03) translate3d(-0.8%, 1.2%, 0);
   }
 }
 
 @media (max-width: 480px) {
   .section {
     padding: 4.2rem 1.1rem 3.6rem;
-  }
-
-  .section::before {
-    inset: clamp(1rem, 10vw, 2.4rem);
   }
 
   .heroTitle {
@@ -529,10 +516,12 @@
     gap: 0.6rem;
   }
 
-  .bubbleField,
-  .hero::after,
-  .hero::before {
-    inset: clamp(0.9rem, 9vw, 2.5rem);
+  .hero .sectionInner {
+    padding: clamp(2.4rem, 12vw, 3.2rem) clamp(1.8rem, 9vw, 2.6rem);
+  }
+
+  .swipeHint {
+    padding-bottom: clamp(1.6rem, 12vh, 3.2rem);
   }
 }
 
@@ -566,6 +555,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .backgroundCanvas,
   .container,
   .section,
   .hero,

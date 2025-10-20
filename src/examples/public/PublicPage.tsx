@@ -54,15 +54,22 @@ type BubbleConfig = {
   delay: number;
 };
 
-const HERO_BUBBLES: BubbleConfig[] = [
-  { size: 14, left: 18, top: 32, driftX: 22, driftY: 26, duration: 8, delay: 0 },
-  { size: 18, left: 32, top: 58, driftX: -18, driftY: 32, duration: 11, delay: 1.2 },
-  { size: 12, left: 46, top: 24, driftX: 16, driftY: 22, duration: 7.5, delay: 0.6 },
-  { size: 24, left: 64, top: 68, driftX: -26, driftY: 34, duration: 12, delay: 0.8 },
-  { size: 16, left: 78, top: 38, driftX: 18, driftY: 28, duration: 9, delay: 1.6 },
-  { size: 10, left: 52, top: 52, driftX: -12, driftY: 18, duration: 6.5, delay: 2 },
-  { size: 20, left: 26, top: 72, driftX: 20, driftY: 30, duration: 10, delay: 0.3 },
-  { size: 13, left: 70, top: 22, driftX: -16, driftY: 20, duration: 7.8, delay: 1 },
+const FLOATING_BUBBLES: BubbleConfig[] = [
+  { size: 18, left: 18, top: 32, driftX: 24, driftY: 30, duration: 6.2, delay: 0 },
+  { size: 22, left: 32, top: 58, driftX: -22, driftY: 36, duration: 7.6, delay: 0.8 },
+  { size: 14, left: 46, top: 24, driftX: 18, driftY: 24, duration: 5.4, delay: 0.5 },
+  { size: 26, left: 64, top: 68, driftX: -30, driftY: 38, duration: 8.2, delay: 0.9 },
+  { size: 18, left: 78, top: 38, driftX: 22, driftY: 32, duration: 6.8, delay: 1.3 },
+  { size: 12, left: 52, top: 52, driftX: -16, driftY: 22, duration: 5.1, delay: 1.8 },
+  { size: 24, left: 26, top: 72, driftX: 24, driftY: 34, duration: 7.2, delay: 0.2 },
+  { size: 15, left: 70, top: 22, driftX: -20, driftY: 24, duration: 5.9, delay: 0.9 },
+];
+
+const BACKGROUND_BLOB_BASES = [
+  { x: 22, y: 20, strength: 1.2 },
+  { x: 76, y: 18, strength: 0.95 },
+  { x: 58, y: 72, strength: 1.15 },
+  { x: 30, y: 84, strength: 1.05 },
 ];
 
 const clamp = (value: number, min: number, max: number) => Math.min(Math.max(value, min), max);
@@ -77,6 +84,7 @@ export default function PublicPage({ heroTitle, heroSubtitle }: PublicPageProps)
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const sectionRefs = useRef<(HTMLElement | null)[]>([]);
   const heroSectionRef = useRef<HTMLElement | null>(null);
+  const backgroundRef = useRef<HTMLDivElement | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const [indicatorReady, setIndicatorReady] = useState(false);
   const [indicatorVisible, setIndicatorVisible] = useState(false);
@@ -261,10 +269,16 @@ export default function PublicPage({ heroTitle, heroSubtitle }: PublicPageProps)
   }, []);
 
   useEffect(() => {
-    const hero = heroSectionRef.current;
-    if (!hero) {
+    if (typeof window === 'undefined') {
       return undefined;
     }
+
+    const backdrop = backgroundRef.current;
+    if (!backdrop) {
+      return undefined;
+    }
+
+    const hero = heroSectionRef.current;
 
     let animationFrame: number | undefined;
     const state = {
@@ -276,25 +290,38 @@ export default function PublicPage({ heroTitle, heroSubtitle }: PublicPageProps)
       targetInfluence: 0,
     };
 
-    const setGlowPositions = () => {
+    const setBlobPositions = () => {
       state.x += (state.targetX - state.x) * 0.08;
       state.y += (state.targetY - state.y) * 0.08;
       state.influence += (state.targetInfluence - state.influence) * 0.08;
 
-      hero.style.setProperty('--glow-x', `${clamp(state.x, 0, 100)}%`);
-      hero.style.setProperty('--glow-y', `${clamp(state.y, 0, 100)}%`);
-      hero.style.setProperty('--glow-opacity', (0.28 + state.influence * 0.55).toFixed(3));
+      const offsetX = ((state.x - 50) / 50) * (4 + state.influence * 6);
+      const offsetY = ((state.y - 50) / 50) * (4 + state.influence * 6);
 
-      animationFrame = requestAnimationFrame(setGlowPositions);
+      BACKGROUND_BLOB_BASES.forEach((base, index) => {
+        const finalX = clamp(base.x + offsetX * base.strength, 0, 100);
+        const finalY = clamp(base.y + offsetY * base.strength, 0, 100);
+        backdrop.style.setProperty(`--blob${index + 1}-x`, `${finalX}%`);
+        backdrop.style.setProperty(`--blob${index + 1}-y`, `${finalY}%`);
+      });
+
+      animationFrame = requestAnimationFrame(setBlobPositions);
     };
 
     const updatePointer = (event: { clientX: number; clientY: number }) => {
-      const rect = hero.getBoundingClientRect();
-      const relativeX = clamp(((event.clientX - rect.left) / rect.width) * 100, 0, 100);
-      const relativeY = clamp(((event.clientY - rect.top) / rect.height) * 100, 0, 100);
+      const viewportWidth = window.innerWidth || 1;
+      const viewportHeight = window.innerHeight || 1;
+      const relativeX = clamp((event.clientX / viewportWidth) * 100, 0, 100);
+      const relativeY = clamp((event.clientY / viewportHeight) * 100, 0, 100);
 
-      const centerX = rect.left + rect.width / 2;
-      const centerY = rect.top + rect.height / 2;
+      let centerX = viewportWidth / 2;
+      let centerY = viewportHeight / 2;
+      if (hero) {
+        const rect = hero.getBoundingClientRect();
+        centerX = rect.left + rect.width / 2;
+        centerY = rect.top + rect.height / 2;
+      }
+
       const dx = event.clientX - centerX;
       const dy = event.clientY - centerY;
       const distance = Math.sqrt(dx * dx + dy * dy);
@@ -310,64 +337,47 @@ export default function PublicPage({ heroTitle, heroSubtitle }: PublicPageProps)
       state.targetInfluence = 0;
     };
 
-    animationFrame = requestAnimationFrame(setGlowPositions);
+    animationFrame = requestAnimationFrame(setBlobPositions);
 
-    const handlePointerMove = (event: PointerEvent) => {
-      updatePointer(event);
-    };
-
-    const handlePointerDown = (event: PointerEvent) => {
-      updatePointer(event);
-    };
-
-    const handlePointerUp = () => {
-      resetPointer();
-    };
-
+    const handlePointerMove = (event: PointerEvent) => updatePointer(event);
+    const handlePointerDown = (event: PointerEvent) => updatePointer(event);
+    const handlePointerUp = () => resetPointer();
     const handleTouchMove = (event: TouchEvent) => {
       if (event.touches.length > 0) {
         const touch = event.touches[0];
-        updatePointer({ clientX: touch.clientX, clientY: touch.clientY } as PointerEvent);
+        updatePointer({ clientX: touch.clientX, clientY: touch.clientY });
       }
     };
-
     const handleTouchStart = (event: TouchEvent) => {
       if (event.touches.length > 0) {
         const touch = event.touches[0];
-        updatePointer({ clientX: touch.clientX, clientY: touch.clientY } as PointerEvent);
+        updatePointer({ clientX: touch.clientX, clientY: touch.clientY });
       }
     };
+    const handleTouchEnd = () => resetPointer();
+    const handleTouchCancel = () => resetPointer();
+    const handlePointerLeaveWindow = () => resetPointer();
 
-    const handleTouchEnd = () => {
-      resetPointer();
-    };
-
-    const handleTouchCancel = () => {
-      resetPointer();
-    };
-
-    hero.addEventListener('pointermove', handlePointerMove, { passive: true });
-    hero.addEventListener('pointerdown', handlePointerDown, { passive: true });
-    hero.addEventListener('pointerup', handlePointerUp, { passive: true });
-    hero.addEventListener('pointerleave', handlePointerUp, { passive: true });
-    hero.addEventListener('pointercancel', handlePointerUp, { passive: true });
-    hero.addEventListener('pointerout', handlePointerUp, { passive: true });
-    hero.addEventListener('touchmove', handleTouchMove, { passive: true });
-    hero.addEventListener('touchstart', handleTouchStart, { passive: true });
-    hero.addEventListener('touchend', handleTouchEnd, { passive: true });
-    hero.addEventListener('touchcancel', handleTouchCancel, { passive: true });
+    window.addEventListener('pointermove', handlePointerMove, { passive: true });
+    window.addEventListener('pointerdown', handlePointerDown, { passive: true });
+    window.addEventListener('pointerup', handlePointerUp, { passive: true });
+    window.addEventListener('pointercancel', handlePointerUp, { passive: true });
+    window.addEventListener('pointerleave', handlePointerLeaveWindow, { passive: true });
+    window.addEventListener('touchmove', handleTouchMove, { passive: true });
+    window.addEventListener('touchstart', handleTouchStart, { passive: true });
+    window.addEventListener('touchend', handleTouchEnd, { passive: true });
+    window.addEventListener('touchcancel', handleTouchCancel, { passive: true });
 
     return () => {
-      hero.removeEventListener('pointermove', handlePointerMove);
-      hero.removeEventListener('pointerdown', handlePointerDown);
-      hero.removeEventListener('pointerup', handlePointerUp);
-      hero.removeEventListener('pointerleave', handlePointerUp);
-      hero.removeEventListener('pointercancel', handlePointerUp);
-      hero.removeEventListener('pointerout', handlePointerUp);
-      hero.removeEventListener('touchmove', handleTouchMove);
-      hero.removeEventListener('touchstart', handleTouchStart);
-      hero.removeEventListener('touchend', handleTouchEnd);
-      hero.removeEventListener('touchcancel', handleTouchCancel);
+      window.removeEventListener('pointermove', handlePointerMove);
+      window.removeEventListener('pointerdown', handlePointerDown);
+      window.removeEventListener('pointerup', handlePointerUp);
+      window.removeEventListener('pointercancel', handlePointerUp);
+      window.removeEventListener('pointerleave', handlePointerLeaveWindow);
+      window.removeEventListener('touchmove', handleTouchMove);
+      window.removeEventListener('touchstart', handleTouchStart);
+      window.removeEventListener('touchend', handleTouchEnd);
+      window.removeEventListener('touchcancel', handleTouchCancel);
 
       if (animationFrame) {
         cancelAnimationFrame(animationFrame);
@@ -378,6 +388,26 @@ export default function PublicPage({ heroTitle, heroSubtitle }: PublicPageProps)
 
   return (
     <div className={styles.wrapper}>
+      <div ref={backgroundRef} className={styles.backgroundCanvas} aria-hidden="true" />
+      <div className={styles.bubbleField} aria-hidden="true">
+        {FLOATING_BUBBLES.map((bubble, bubbleIndex) => (
+          <span
+            key={`${bubble.left}-${bubble.top}-${bubbleIndex}`}
+            className={styles.bubble}
+            style={
+              {
+                '--bubble-size': `${bubble.size}px`,
+                '--bubble-left': `${bubble.left}%`,
+                '--bubble-top': `${bubble.top}%`,
+                '--bubble-drift-x': `${bubble.driftX}px`,
+                '--bubble-drift-y': `${bubble.driftY}px`,
+                '--bubble-duration': `${bubble.duration}s`,
+                '--bubble-delay': `${bubble.delay}s`,
+              } as CSSProperties
+            }
+          />
+        ))}
+      </div>
       <button
         type="button"
         className={`${styles.languageSwitcher} ${languageTransitioning ? styles.languageSwitcherActive : ''}`}
@@ -409,27 +439,6 @@ export default function PublicPage({ heroTitle, heroSubtitle }: PublicPageProps)
               id={section.id}
               data-section-id={section.id}
             >
-              {isHero ? (
-                <div className={styles.bubbleField} aria-hidden="true">
-                  {HERO_BUBBLES.map((bubble, bubbleIndex) => (
-                    <span
-                      key={`${bubble.left}-${bubble.top}-${bubbleIndex}`}
-                      className={styles.bubble}
-                      style={
-                        {
-                          '--bubble-size': `${bubble.size}px`,
-                          '--bubble-left': `${bubble.left}%`,
-                          '--bubble-top': `${bubble.top}%`,
-                          '--bubble-drift-x': `${bubble.driftX}px`,
-                          '--bubble-drift-y': `${bubble.driftY}px`,
-                          '--bubble-duration': `${bubble.duration}s`,
-                          '--bubble-delay': `${bubble.delay}s`,
-                        } as CSSProperties
-                      }
-                    />
-                  ))}
-                </div>
-              ) : null}
               <div className={styles.sectionInner}>
                 <h2 className={index === 0 ? styles.heroTitle : styles.sectionTitle}>{title}</h2>
                 <p className={styles.sectionBody}>{body}</p>
