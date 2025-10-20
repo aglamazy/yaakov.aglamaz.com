@@ -314,41 +314,61 @@
 
 .swipeHint {
   margin-top: auto;
-  padding-bottom: clamp(1.8rem, 6vh, 3.4rem);
+  padding-bottom: clamp(2.6rem, 9vh, 4.4rem);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.35rem;
-  color: rgba(216, 244, 224, 0.65);
-  font-size: 0.7rem;
-  letter-spacing: 0.35em;
+  gap: 0.55rem;
+  color: rgba(234, 252, 243, 0.82);
+  font-size: 0.82rem;
+  letter-spacing: 0.4em;
   text-transform: uppercase;
   pointer-events: none;
-  animation: swipeFade 2.4s ease-in-out infinite;
+  animation: swipeFade 4s ease-in-out infinite;
   align-self: center;
+  text-shadow: 0 6px 16px rgba(10, 40, 26, 0.6);
 }
 
 .swipeLabel {
   font-weight: 500;
 }
 
+
+.bubbleHint {
+  margin-bottom: clamp(1.6rem, 6vh, 2.6rem);
+  display: flex;
+  justify-content: center;
+  color: rgba(216, 248, 240, 0.9);
+  font-size: 0.75rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  opacity: 0.88;
+  text-shadow: 0 5px 14px rgba(6, 24, 16, 0.6);
+  pointer-events: none;
+}
+
+.bubbleHintLabel {
+  display: inline-block;
+}
+
 .swipeArrow {
-  width: 1px;
-  height: 34px;
-  background: linear-gradient(180deg, rgba(195, 231, 205, 0) 0%, rgba(195, 231, 205, 0.85) 100%);
+  width: 2px;
+  height: 40px;
+  background: linear-gradient(180deg, rgba(224, 255, 244, 0) 0%, rgba(224, 255, 244, 0.95) 100%);
   position: relative;
+  filter: drop-shadow(0 6px 18px rgba(8, 32, 20, 0.55));
 }
 
 .swipeArrow::after {
   content: '';
   position: absolute;
-  bottom: -6px;
+  bottom: -8px;
   left: 50%;
   transform: translateX(-50%) rotate(45deg);
-  width: 8px;
-  height: 8px;
-  border-left: 1px solid rgba(195, 231, 205, 0.85);
-  border-bottom: 1px solid rgba(195, 231, 205, 0.85);
+  width: 10px;
+  height: 10px;
+  border-left: 2px solid rgba(224, 255, 244, 0.95);
+  border-bottom: 2px solid rgba(224, 255, 244, 0.95);
 }
 
 .indicator {
@@ -430,21 +450,21 @@
 
 @keyframes swipeFade {
   0%,
-  20% {
+  10% {
     opacity: 0;
-    transform: translate(-50%, 12px);
+    transform: translate(-50%, 18px) scale(0.92);
   }
-  45% {
+  30% {
     opacity: 1;
-    transform: translate(-50%, 0);
+    transform: translate(-50%, 0) scale(1);
   }
-  80% {
-    opacity: 0;
-    transform: translate(-50%, -10px);
+  65% {
+    opacity: 0.95;
+    transform: translate(-50%, -6px) scale(1);
   }
   100% {
     opacity: 0;
-    transform: translate(-50%, 12px);
+    transform: translate(-50%, 20px) scale(0.94);
   }
 }
 
