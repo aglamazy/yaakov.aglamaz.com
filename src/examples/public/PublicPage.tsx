@@ -51,6 +51,21 @@ const HERO_BLOB_BASES = [
   { x: 32, y: 82, strength: 0.85 },
 ];
 
+const HERO_BUBBLES = [
+  { id: 1, left: 18, top: 32, size: 12, driftX: '18px', driftY: '-26px', duration: 14, delay: 0 },
+  { id: 2, left: 64, top: 26, size: 14, driftX: '-22px', driftY: '-18px', duration: 16, delay: 1.8 },
+  { id: 3, left: 42, top: 64, size: 10, driftX: '16px', driftY: '20px', duration: 13, delay: 0.6 },
+  { id: 4, left: 78, top: 58, size: 8, driftX: '10px', driftY: '-18px', duration: 11, delay: 2.4 },
+  { id: 5, left: 28, top: 58, size: 9, driftX: '-18px', driftY: '24px', duration: 17, delay: 1.2 },
+  { id: 6, left: 54, top: 18, size: 11, driftX: '22px', driftY: '18px', duration: 15, delay: 3.2 },
+  { id: 7, left: 84, top: 34, size: 7, driftX: '-12px', driftY: '16px', duration: 12, delay: 0.9 },
+  { id: 8, left: 12, top: 48, size: 9, driftX: '24px', driftY: '-16px', duration: 18, delay: 2.9 },
+  { id: 9, left: 48, top: 82, size: 8, driftX: '-20px', driftY: '-22px', duration: 16, delay: 1.5 },
+  { id: 10, left: 70, top: 74, size: 10, driftX: '18px', driftY: '18px', duration: 19, delay: 0.3 },
+  { id: 11, left: 32, top: 20, size: 7, driftX: '-14px', driftY: '14px', duration: 12, delay: 2.1 },
+  { id: 12, left: 58, top: 48, size: 9, driftX: '16px', driftY: '-14px', duration: 15, delay: 3.6 },
+];
+
 const clamp = (value: number, min: number, max: number) => Math.min(Math.max(value, min), max);
 
 interface PublicPageProps {
@@ -402,58 +417,88 @@ export default function PublicPage({ heroTitle, heroSubtitle }: PublicPageProps)
               id={section.id}
               data-section-id={section.id}
             >
-              <div className={styles.sectionInner}>
-                <h2 className={index === 0 ? styles.heroTitle : styles.sectionTitle}>{title}</h2>
-                <p className={styles.sectionBody}>{body}</p>
+              {isHero ? (
+                <>
+                  <div className={`${styles.sectionInner} ${styles.heroInner}`}>
+                    <div className={styles.heroContent}>
+                      <h2 className={styles.heroTitle}>{title}</h2>
+                      <p className={`${styles.sectionBody} ${styles.heroBody}`}>{body}</p>
+                      {cta ? (
+                        <button
+                          type="button"
+                          className={`${styles.ctaButton} ${styles.ctaButtonPrimary}`}
+                          onClick={() => scrollToIndex(index + 1)}
+                        >
+                          {cta}
+                        </button>
+                      ) : null}
+                    </div>
 
-                {section.id === 'skills' ? (
-                  <div className={styles.skillBars}>
-                    {skillsList.map((label, skillIndex) => (
-                      <div key={`${label}-${skillIndex}`} className={styles.skillBar}>
-                        <span className={styles.skillLabel}>{label}</span>
-                        <span
-                          className={styles.skillMeter}
-                          aria-hidden="true"
-                          style={{ '--fill-width': `${Math.min(92, 65 + skillIndex * 8)}%` } as CSSProperties}
-                        />
+                    <div className={styles.heroScene} aria-hidden="true">
+                      <div className={styles.heroSceneBackdrop} />
+                      <div className={styles.heroSceneGlow} />
+                      <div className={styles.heroBubbles}>
+                        {HERO_BUBBLES.map((bubble) => (
+                          <span
+                            key={bubble.id}
+                            className={styles.heroBubble}
+                            style={{
+                              '--bubble-left': `${bubble.left}%`,
+                              '--bubble-top': `${bubble.top}%`,
+                              '--bubble-size': `${bubble.size}px`,
+                              '--bubble-drift-x': bubble.driftX,
+                              '--bubble-drift-y': bubble.driftY,
+                              '--bubble-duration': `${bubble.duration}s`,
+                              '--bubble-delay': `${bubble.delay}s`,
+                            } as CSSProperties}
+                          />
+                        ))}
                       </div>
-                    ))}
+                    </div>
                   </div>
-                ) : null}
-
-                {section.id === 'projects' ? (
-                  <div className={styles.projectGrid}>
-                    {projectsList.map((project, projectIndex) => (
-                      <article key={`${project.title}-${projectIndex}`} className={styles.projectCard}>
-                        <h3 className={styles.projectTitle}>{project.title}</h3>
-                        <p className={styles.projectSummary}>{project.summary}</p>
-                      </article>
-                    ))}
-                  </div>
-                ) : null}
-
-                {cta && section.id === 'hero' ? (
-                  <button
-                    type="button"
-                    className={styles.ctaButton}
-                    onClick={() => scrollToIndex(index + 1)}
-                  >
-                    {cta}
-                  </button>
-                ) : null}
-
-                {cta && section.id === 'contact' ? (
-                  <button type="button" className={`${styles.ctaButton} ${styles.ctaGhost}`} onClick={() => scrollToIndex(0)}>
-                    {cta}
-                  </button>
-                ) : null}
-                {section.id === 'hero' ? (
-                  <div className={styles.swipeHint} aria-hidden="true">
+                  <div className={`${styles.swipeHint} ${styles.heroSwipeHint}`} aria-hidden="true">
                     <span className={styles.swipeArrow} />
                     <span className={styles.swipeLabel}>{t('publicPortfolio.swipeHint')}</span>
                   </div>
-                ) : null}
-              </div>
+                </>
+              ) : (
+                <div className={styles.sectionInner}>
+                  <h2 className={styles.sectionTitle}>{title}</h2>
+                  <p className={styles.sectionBody}>{body}</p>
+
+                  {section.id === 'skills' ? (
+                    <div className={styles.skillBars}>
+                      {skillsList.map((label, skillIndex) => (
+                        <div key={`${label}-${skillIndex}`} className={styles.skillBar}>
+                          <span className={styles.skillLabel}>{label}</span>
+                          <span
+                            className={styles.skillMeter}
+                            aria-hidden="true"
+                            style={{ '--fill-width': `${Math.min(92, 65 + skillIndex * 8)}%` } as CSSProperties}
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  ) : null}
+
+                  {section.id === 'projects' ? (
+                    <div className={styles.projectGrid}>
+                      {projectsList.map((project, projectIndex) => (
+                        <article key={`${project.title}-${projectIndex}`} className={styles.projectCard}>
+                          <h3 className={styles.projectTitle}>{project.title}</h3>
+                          <p className={styles.projectSummary}>{project.summary}</p>
+                        </article>
+                      ))}
+                    </div>
+                  ) : null}
+
+                  {cta && section.id === 'contact' ? (
+                    <button type="button" className={`${styles.ctaButton} ${styles.ctaGhost}`} onClick={() => scrollToIndex(0)}>
+                      {cta}
+                    </button>
+                  ) : null}
+                </div>
+              )}
             </section>
           );
         })}
