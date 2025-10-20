@@ -4,6 +4,9 @@ import { getFirestore, Timestamp } from 'firebase-admin/firestore';
 import nextI18NextConfig from '../../next-i18next.config.js';
 import { ConfigRepository } from '@/repositories/ConfigRepository';
 import { TranslationService } from '@/services/TranslationService';
+import { ensureFirebaseAdminEnv } from '@/lib/env/ensureFirebaseEnv';
+
+ensureFirebaseAdminEnv();
 
 export function initAdmin() {
   if (!getApps().length) {
@@ -98,4 +101,37 @@ export async function fetchSiteInfo() {
   }
 
   return { id: doc.id, ...plainData };
+}
+
+function coerceFieldString(data: Record<string, unknown>, key: string) {
+  const value = data[key];
+  if (typeof value === 'string') {
+    const trimmed = value.trim();
+    if (trimmed.length > 0) {
+      return trimmed;
+    }
+  }
+  return key;
+}
+
+export async function fetchStaffProfile() {
+  initAdmin();
+  const db = getFirestore();
+  const snapshot = await db.collection('staff').limit(1).get();
+
+  if (snapshot.empty) {
+    return null;
+  }
+
+  const doc = snapshot.docs[0];
+  const data = doc.data() ?? {};
+
+  const name = coerceFieldString(data, 'name');
+  const position = coerceFieldString(data, 'position');
+
+  return {
+    id: doc.id,
+    name,
+    position,
+  };
 }
