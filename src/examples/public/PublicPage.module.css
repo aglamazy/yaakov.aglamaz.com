@@ -11,14 +11,14 @@
   z-index: 30;
   padding: 0.35rem 0.9rem;
   border-radius: 999px;
-  border: 1px solid rgba(148, 163, 184, 0.25);
-  background: rgba(15, 23, 42, 0.6);
-  color: rgba(226, 232, 240, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  background: linear-gradient(135deg, rgba(236, 72, 153, 0.75), rgba(249, 115, 22, 0.75));
+  color: rgba(255, 255, 255, 0.85);
   font-size: 14px;
   letter-spacing: 0.18em;
   text-transform: uppercase;
   cursor: pointer;
-  opacity: 0.6;
+  opacity: 0.8;
   transition: opacity 0.25s ease, transform 0.25s ease, background 0.25s ease, border-color 0.25s ease;
   backdrop-filter: blur(12px);
 }
@@ -27,8 +27,9 @@
 .languageSwitcher:focus-visible,
 .languageSwitcherActive {
   opacity: 1;
-  background: rgba(15, 23, 42, 0.85);
-  border-color: rgba(226, 232, 240, 0.45);
+  transform: translateY(-1px);
+  background: linear-gradient(135deg, rgba(249, 115, 22, 0.92), rgba(236, 72, 153, 0.92));
+  border-color: rgba(255, 255, 255, 0.65);
 }
 
 .languageLabel {
@@ -45,8 +46,11 @@
   overflow-y: auto;
   scroll-snap-type: y mandatory;
   scroll-behavior: smooth;
-  background: radial-gradient(circle at top left, #1e293b 0%, #0f172a 40%, #020617 100%);
-  color: #e2e8f0;
+  background: radial-gradient(circle at 12% 18%, #fde68a 0%, rgba(253, 230, 138, 0.35) 28%, transparent 55%),
+    radial-gradient(circle at 80% 15%, rgba(244, 114, 182, 0.45), transparent 58%),
+    radial-gradient(circle at 15% 80%, rgba(129, 140, 248, 0.4), transparent 62%),
+    linear-gradient(160deg, #0f172a 0%, #312e81 42%, #be123c 78%, #f97316 100%);
+  color: #fdf4ff;
 }
 
 .container::-webkit-scrollbar {
@@ -54,7 +58,7 @@
 }
 
 .container::-webkit-scrollbar-thumb {
-  background: rgba(148, 163, 184, 0.4);
+  background: linear-gradient(180deg, rgba(249, 115, 22, 0.8), rgba(236, 72, 153, 0.6));
   border-radius: 999px;
 }
 
@@ -83,11 +87,11 @@
   content: '';
   position: absolute;
   inset: 0;
-  background: radial-gradient(circle at var(--blob1-x) var(--blob1-y), rgba(56, 189, 248, 0.14), transparent 55%),
-    radial-gradient(circle at var(--blob2-x) var(--blob2-y), rgba(99, 102, 241, 0.18), transparent 55%),
-    radial-gradient(circle at var(--blob3-x) var(--blob3-y), rgba(29, 78, 216, 0.14), transparent 50%),
-    radial-gradient(circle at var(--blob4-x) var(--blob4-y), rgba(45, 212, 191, 0.14), transparent 45%),
-    linear-gradient(180deg, rgba(2, 6, 23, 0) 0%, rgba(2, 6, 23, 0.78) 85%);
+  background: radial-gradient(circle at var(--blob1-x) var(--blob1-y), rgba(236, 72, 153, 0.22), transparent 55%),
+    radial-gradient(circle at var(--blob2-x) var(--blob2-y), rgba(239, 68, 68, 0.25), transparent 55%),
+    radial-gradient(circle at var(--blob3-x) var(--blob3-y), rgba(14, 165, 233, 0.18), transparent 50%),
+    radial-gradient(circle at var(--blob4-x) var(--blob4-y), rgba(249, 115, 22, 0.22), transparent 45%),
+    linear-gradient(180deg, rgba(15, 23, 42, 0) 0%, rgba(15, 23, 42, 0.82) 85%);
   filter: blur(0px);
   mix-blend-mode: screen;
   animation: meshDrift 28s ease-in-out infinite;
@@ -99,7 +103,7 @@
   content: '';
   position: absolute;
   inset: 0;
-  background: radial-gradient(circle at center, rgba(2, 6, 23, 0) 55%, rgba(2, 6, 23, 0.7));
+  background: radial-gradient(circle at center, rgba(15, 23, 42, 0) 55%, rgba(15, 23, 42, 0.7));
   pointer-events: none;
 }
 
@@ -122,20 +126,21 @@
   font-size: 52px;
   font-weight: 700;
   line-height: 1.05;
-  color: #f8fafc;
+  color: #fff7ed;
+  text-shadow: 0 12px 35px rgba(2, 6, 23, 0.35);
 }
 
 .sectionTitle {
   font-size: 1.8rem;
   font-weight: 600;
   line-height: 1.15;
-  color: #f8fafc;
+  color: #fef3c7;
 }
 
 .sectionBody {
   font-size: 1rem;
   line-height: 1.65;
-  color: #94a3b8;
+  color: rgba(255, 240, 245, 0.82);
 }
 
 .hero .sectionBody {
@@ -143,7 +148,7 @@
   line-height: 1.9;
   max-width: 28rem;
   margin-inline: auto;
-  color: rgba(226, 232, 240, 0.9);
+  color: rgba(255, 255, 255, 0.92);
 }
 
 .ctaButton {
@@ -152,8 +157,8 @@
   padding: 0.95rem 2.2rem;
   border-radius: 999px;
   border: none;
-  background: linear-gradient(135deg, #38bdf8 0%, #6366f1 100%);
-  color: #020617;
+  background: linear-gradient(130deg, #f97316 0%, #ec4899 48%, #8b5cf6 100%);
+  color: #0f172a;
   font-weight: 600;
   letter-spacing: 0.02em;
   cursor: pointer;
@@ -173,7 +178,7 @@
   flex-direction: column;
   align-items: center;
   gap: 0.35rem;
-  color: rgba(226, 232, 240, 0.65);
+  color: rgba(255, 255, 255, 0.78);
   font-size: 0.7rem;
   letter-spacing: 0.35em;
   text-transform: uppercase;
@@ -188,7 +193,7 @@
 .swipeArrow {
   width: 1px;
   height: 32px;
-  background: linear-gradient(180deg, rgba(148, 163, 184, 0) 0%, rgba(148, 163, 184, 0.8) 100%);
+  background: linear-gradient(180deg, rgba(252, 211, 77, 0) 0%, rgba(251, 191, 36, 0.85) 100%);
   position: relative;
 }
 
@@ -200,8 +205,8 @@
   transform: translateX(-50%) rotate(45deg);
   width: 8px;
   height: 8px;
-  border-left: 1px solid rgba(148, 163, 184, 0.8);
-  border-bottom: 1px solid rgba(148, 163, 184, 0.8);
+  border-left: 1px solid rgba(251, 191, 36, 0.85);
+  border-bottom: 1px solid rgba(251, 191, 36, 0.85);
 }
 
 @keyframes swipeFade {
@@ -255,18 +260,18 @@
 .ctaButton:hover,
 .ctaButton:focus-visible {
   transform: translateY(-2px);
-  box-shadow: 0 16px 35px rgba(99, 102, 241, 0.35);
+  box-shadow: 0 18px 38px rgba(236, 72, 153, 0.45);
 }
 
 .ctaGhost {
   background: transparent;
-  color: #e2e8f0;
-  border: 1px solid rgba(148, 163, 184, 0.45);
+  color: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.52);
 }
 
 .ctaGhost:hover,
 .ctaGhost:focus-visible {
-  border-color: rgba(248, 250, 252, 0.75);
+  border-color: rgba(255, 255, 255, 0.85);
 }
 
 .skillBars {
@@ -287,7 +292,7 @@
   font-size: 0.85rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: rgba(226, 232, 240, 0.85);
+  color: rgba(255, 255, 255, 0.88);
 }
 
 .skillMeter {
@@ -296,7 +301,7 @@
   flex: 1;
   height: 6px;
   border-radius: 999px;
-  background: rgba(148, 163, 184, 0.2);
+  background: rgba(255, 255, 255, 0.2);
   overflow: hidden;
 }
 
@@ -305,7 +310,7 @@
   position: absolute;
   inset: 0;
   width: var(--fill-width);
-  background: linear-gradient(90deg, #38bdf8 0%, #6366f1 100%);
+  background: linear-gradient(90deg, #fbbf24 0%, #f97316 40%, #ec4899 100%);
   border-radius: inherit;
   transition: width 0.6s ease;
 }
@@ -319,23 +324,23 @@
 .projectCard {
   padding: 1.25rem;
   border-radius: 1.25rem;
-  border: 1px solid rgba(148, 163, 184, 0.16);
-  background: rgba(15, 23, 42, 0.65);
-  backdrop-filter: blur(12px);
-  box-shadow: 0 25px 45px rgba(15, 23, 42, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: linear-gradient(160deg, rgba(15, 23, 42, 0.65), rgba(124, 58, 237, 0.35));
+  backdrop-filter: blur(16px);
+  box-shadow: 0 25px 45px rgba(88, 28, 135, 0.45);
 }
 
 .projectTitle {
   font-size: 1.1rem;
   font-weight: 600;
   margin-bottom: 0.4rem;
-  color: #f1f5f9;
+  color: #fff7ed;
 }
 
 .projectSummary {
   font-size: 0.95rem;
   line-height: 1.55;
-  color: #94a3b8;
+  color: rgba(255, 255, 255, 0.78);
 }
 
 
@@ -348,9 +353,9 @@
   align-items: center;
   gap: 0.7rem;
   padding: 0.55rem 0.85rem;
-  background: rgba(15, 23, 42, 0.65);
+  background: linear-gradient(135deg, rgba(30, 64, 175, 0.7), rgba(221, 65, 36, 0.7));
   border-radius: 999px;
-  border: 1px solid rgba(148, 163, 184, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.22);
   backdrop-filter: blur(14px);
   z-index: 20;
   opacity: 0;
@@ -375,33 +380,33 @@
   min-width: 44px;
   min-height: 44px;
   cursor: pointer;
-  color: rgba(148, 163, 184, 0.65);
+  color: rgba(255, 255, 255, 0.65);
   transition: color 0.25s ease, transform 0.25s ease;
   z-index: 1;
 }
 
 .indicatorButton:hover,
 .indicatorButton:focus-visible {
-  color: rgba(248, 250, 252, 0.85);
+  color: rgba(255, 255, 255, 0.88);
 }
 
 .indicatorButtonActive {
-  color: #f8fafc;
+  color: #fff7ed;
 }
 
 .indicatorDot {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: rgba(148, 163, 184, 0.4);
-  box-shadow: 0 0 0 0 rgba(56, 189, 248, 0.12);
+  background: rgba(255, 255, 255, 0.35);
+  box-shadow: 0 0 0 0 rgba(236, 72, 153, 0.12);
   transition: transform 0.25s ease, background 0.25s ease, box-shadow 0.25s ease;
 }
 
 .indicatorDotActive {
-  background: linear-gradient(135deg, #38bdf8 0%, #6366f1 100%);
+  background: linear-gradient(135deg, #f97316 0%, #ec4899 55%, #6366f1 100%);
   transform: scale(1.45);
-  box-shadow: 0 0 10px rgba(56, 189, 248, 0.35);
+  box-shadow: 0 0 12px rgba(236, 72, 153, 0.55);
 }
 
 .srOnly {
