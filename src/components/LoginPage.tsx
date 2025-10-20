@@ -224,7 +224,7 @@ export default function LoginPage({ redirectPath = '/app', onAuthenticated }: Lo
           <span className="text-4xl">🌳</span>
         </div>
         <h1 className="text-2xl font-bold text-gray-900 text-center">
-          {t('welcomeToFamilyCircle', { name: localizedSiteName || siteInfo?.name || 'Example' })}
+          {t('welcomeToSite', { name: localizedSiteName || siteInfo?.name || 'Example' })}
         </h1>
         <p className="text-gray-500 mt-2 text-center">{t('signInToContinue')}</p>
       </div>

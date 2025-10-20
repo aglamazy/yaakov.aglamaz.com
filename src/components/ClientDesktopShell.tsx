@@ -7,7 +7,6 @@ import Modal from '@/components/ui/Modal';
 import LoginPage from '@/components/LoginPage';
 import PendingMemberContent from '@/components/PendingMemberContent';
 import NotMemberContent from '@/components/NotMemberContent';
-import EditUserDetails from '@/components/EditUserDetails';
 import styles from './ClientLayoutShell.module.css';
 import type { IUser } from '@/entities/User';
 import type { IMember } from '@/entities/Member';
@@ -20,8 +19,6 @@ interface ModalControls {
   closePending: () => void;
   isApplyOpen: boolean;
   closeApply: () => void;
-  isEditOpen: boolean;
-  closeEdit: () => void;
 }
 
 interface ClientDesktopShellProps extends ModalControls {
@@ -48,8 +45,6 @@ export default function ClientDesktopShell({
   closePending,
   isApplyOpen,
   closeApply,
-  isEditOpen,
-  closeEdit,
 }: ClientDesktopShellProps) {
   const baseClass = styles.desktopContainer;
   const containerClassName = presentationModeActive ? `${baseClass} ${styles.presentationActive}` : baseClass;
@@ -70,9 +65,6 @@ export default function ClientDesktopShell({
       </Modal>
       <Modal isOpen={isApplyOpen} onClose={closeApply}>
         <NotMemberContent/>
-      </Modal>
-      <Modal isOpen={isEditOpen} onClose={closeEdit}>
-        <EditUserDetails/>
       </Modal>
     </div>
   );

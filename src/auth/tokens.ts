@@ -29,7 +29,7 @@ export const inSeconds = (sec: number) => nowSeconds() + sec;
 export function buildAccessClaims(app: AppClaims, ttlSec: number): TokenClaims {
   return {
     sub: app.userId,
-    aud: "FamilyNet",
+    aud: 'app',
     iat: nowSeconds(),
     exp: inSeconds(ttlSec),
     ...app,

@@ -10,7 +10,7 @@ export interface IBlogPost {
     engine: 'gpt' | 'manual' | 'other';
   }>;
   translationMeta?: {
-    requested?: Record<string, any>; // lang -> Timestamp
+    requested?: Record<string, any>;
     attempts?: number;
   };
   title: string;

@@ -23,7 +23,7 @@ export default function TermsContentEn() {
           <CardContent className="p-6">
             <h2 className="text-xl font-semibold text-charcoal mb-2">Content and Ownership</h2>
             <p className="text-sage-700 leading-relaxed">
-              You retain ownership of content you submit. By posting, you grant us a license to display it within the family site as configured by admins.
+              You retain ownership of content you submit. By posting, you grant us a license to display it within the site as configured by administrators.
             </p>
           </CardContent>
         </Card>
@@ -32,7 +32,7 @@ export default function TermsContentEn() {
           <CardContent className="p-6">
             <h2 className="text-xl font-semibold text-charcoal mb-2">Privacy</h2>
             <p className="text-sage-700 leading-relaxed">
-              We process personal data according to our privacy practices. Access is limited to authorized family members and administrators.
+              We process personal data according to our privacy practices. Access is limited to authorized members and administrators.
             </p>
           </CardContent>
         </Card>
@@ -67,4 +67,3 @@ export default function TermsContentEn() {
     </div>
   );
 }
-

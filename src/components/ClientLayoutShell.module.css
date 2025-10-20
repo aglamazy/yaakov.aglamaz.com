@@ -40,6 +40,13 @@
   overflow: hidden;
 }
 
+.mobilePanel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1.5rem;
+}
+
 .presentationMain {
   flex: 1;
   width: 100%;

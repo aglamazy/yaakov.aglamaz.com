@@ -12,7 +12,6 @@ import { landingPage } from "@/app/settings";
 import { useLoginModalStore } from '@/store/LoginModalStore';
 import { usePendingMemberModalStore } from '@/store/PendingMemberModalStore';
 import { useNotMemberModalStore } from '@/store/NotMemberModalStore';
-import { useEditUserModalStore } from '@/store/EditUserModalStore';
 import { usePresentationModeStore } from '@/store/PresentationModeStore';
 import { useIsMobile } from '@/hooks/useIsMobile';
 import ClientDesktopShell from '@/components/ClientDesktopShell';
@@ -28,7 +27,6 @@ export default function ClientLayoutShell({ children }) {
   const { isOpen: isLoginOpen, close: closeLogin, open: openLogin } = useLoginModalStore();
   const { isOpen: isPendingOpen, close: closePending, open: openPending } = usePendingMemberModalStore();
   const { isOpen: isApplyOpen, close: closeApply, open: openApply } = useNotMemberModalStore();
-  const { isOpen: isEditOpen, close: closeEdit } = useEditUserModalStore();
 
   const { fetchMember } = useMemberStore();
   const presentationModeActive = usePresentationModeStore((state) => state.active);
@@ -113,8 +111,6 @@ export default function ClientLayoutShell({ children }) {
             closePending={closePending}
             isApplyOpen={isApplyOpen}
             closeApply={closeApply}
-            isEditOpen={isEditOpen}
-            closeEdit={closeEdit}
           />
         ) : (
           <ClientDesktopShell
@@ -130,8 +126,6 @@ export default function ClientLayoutShell({ children }) {
             closePending={closePending}
             isApplyOpen={isApplyOpen}
             closeApply={closeApply}
-            isEditOpen={isEditOpen}
-            closeEdit={closeEdit}
           >
             {children}
           </ClientDesktopShell>

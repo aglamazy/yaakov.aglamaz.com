@@ -3,13 +3,12 @@
 import React, { useState, useRef, useEffect } from "react";
 import Navigation from "@/components/Navigation";
 import { useTranslation } from 'react-i18next';
-import { LogOut, Users, MessageCircle, Home as HomeIcon, BookOpen, User } from 'lucide-react';
+import { LogOut, Home as HomeIcon } from 'lucide-react';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import { IUser } from "@/entities/User";
 import { IMember } from "@/entities/Member";
 import { ISite } from "@/entities/Site";
 import { useLoginModalStore } from '@/store/LoginModalStore';
-import { useEditUserModalStore } from '@/store/EditUserModalStore';
 import { getLocalizedSiteName } from '@/utils/siteName';
 import MemberAvatar from '@/components/MemberAvatar';
 
@@ -36,7 +35,6 @@ export default function Header({ user, member, onLogout, siteInfo }: HeaderProps
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const openLogin = useLoginModalStore((s) => s.open);
-  const openEdit = useEditUserModalStore((s) => s.open);
   const localizedName = getLocalizedSiteName(siteInfo, i18n.language);
 
   useEffect(() => {
@@ -87,11 +85,8 @@ export default function Header({ user, member, onLogout, siteInfo }: HeaderProps
                 <a className="hover:underline flex items-center gap-1" href="/">
                   {isRTL ? (<><span>{t('home') as string}</span><HomeIcon size={18} /></>) : (<><HomeIcon size={18} /><span>{t('home') as string}</span></>)}
                 </a>
-                <a className="hover:underline flex items-center gap-1" href="/blog/family">
-                  {isRTL ? (<><span>{t('blog') as string}</span><BookOpen size={18} /></>) : (<><BookOpen size={18} /><span>{t('blog') as string}</span></>)}
-                </a>
                 <a className="hover:underline flex items-center gap-1" href="/contact">
-                  {isRTL ? (<><span>{t('contactUs') as string}</span><MessageCircle size={18} /></>) : (<><MessageCircle size={18} /><span>{t('contactUs') as string}</span></>)}
+                  {/*{isRTL ? (<><span>{t('contactUs') as string}</span><MessageCircle size={18} /></>) : (<><MessageCircle size={18} /><span>{t('contactUs') as string}</span></>)}*/}
                 </a>
               </>
             ); })()}
@@ -141,50 +136,6 @@ export default function Header({ user, member, onLogout, siteInfo }: HeaderProps
                 className={`origin-top-right absolute ${menuPosition} mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-50`}>
                 <div className="py-1">
                   {/* Admin menu items if member is admin */}
-                  {member?.role === 'admin' && (
-                    <>
-                      <button
-                        onClick={() => {
-                          setIsUserMenuOpen(false);
-                          router.push('/admin/pending-members');
-                        }}
-                        className="flex items-center w-full px-4 py-2 text-sm text-green-700 hover:bg-green-50 transition-colors duration-200"
-                      >
-                        <Users size={16} className="mr-3"/>
-                        {t('pendingMembers')}
-                      </button>
-                      <button
-                        onClick={() => {
-                          setIsUserMenuOpen(false);
-                          router.push('/admin/site-members');
-                        }}
-                        className="flex items-center w-full px-4 py-2 text-sm text-green-700 hover:bg-green-50 transition-colors duration-200"
-                      >
-                        <Users size={16} className="mr-3"/>
-                        {t('siteMembers')}
-                      </button>
-                      <button
-                        onClick={() => {
-                          setIsUserMenuOpen(false);
-                          router.push('/admin/contact-messages');
-                        }}
-                        className="flex items-center w-full px-4 py-2 text-sm text-green-700 hover:bg-green-50 transition-colors duration-200"
-                      >
-                        <MessageCircle size={16} className="mr-3"/>
-                        {t('contactMessages')}
-                      </button>
-                    </>
-                  )}
-                  <button
-                    onClick={() => {
-                      setIsUserMenuOpen(false);
-                      openEdit();
-                    }}
-                    className="flex items-center w-full px-4 py-2 text-sm text-sage-700 hover:bg-sage-50 transition-colors duration-200"
-                  >
-                    <User size={16} className="mr-3"/>
-                    {t('editProfile')}
-                  </button>
                   <button
                     onClick={() => {
                       setIsUserMenuOpen(false);

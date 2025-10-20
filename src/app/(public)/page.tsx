@@ -1,4 +1,4 @@
-import PublicPage from '@/examples/public/PublicPage';
+import PublicPage from './components/PublicPage/PublicPage';
 import { fetchStaffProfile } from '@/firebase/admin';
 
 export const dynamic = 'force-static';

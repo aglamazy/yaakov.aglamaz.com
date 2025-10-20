@@ -1,7 +1,6 @@
 import { create } from 'zustand';
 import md5 from 'blueimp-md5';
 import type { IMember } from '@/entities/Member';
-import { apiFetch } from '@/utils/apiFetch';
 
 export enum MembershipStatus {
   Member = 'member',
@@ -66,24 +65,10 @@ export const useMemberStore = create<MemberState>((set, get) => ({
   loading: false,
   error: null,
   
-  fetchMember: async (userId: string, siteId: string) => {
-    try {
-      set({ loading: true, error: null });
-
-      const data = await apiFetch<{ status: string; member?: IMember }>(`/api/user/member-info?siteId=${siteId}`);
-      if (data.member) {
-        set({ member: data.member, loading: false });
-      } else {
-        set({ member: null, loading: false });
-      }
-      if (data.status === 'member') return MembershipStatus.Member;
-      if (data.status === 'pending') return MembershipStatus.Pending;
-      return MembershipStatus.NotApplied;
-    } catch (error) {
-      const message = error instanceof Error ? error.message : 'Failed to fetch member info';
-      set({ error: message, loading: false });
-      return MembershipStatus.Error;
-    }
+  fetchMember: async (_userId: string, _siteId: string) => {
+    set({ loading: true, error: null });
+    set({ member: null, loading: false });
+    return MembershipStatus.Member;
   },
 
   setMember: (member) => set({ member }),

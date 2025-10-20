@@ -46,24 +46,37 @@ const RTL_LANGS = new Set(['he', 'ar']);
 
 type BubbleConfig = {
   size: number;
-  left: number;
-  top: number;
-  driftX: number;
-  driftY: number;
-  duration: number;
-  delay: number;
+  initialX: number;
+  initialY: number;
+  velocityX: number;
+  velocityY: number;
+  speedVariance: number;
 };
 
-const FLOATING_BUBBLES: BubbleConfig[] = [
-  { size: 18, left: 18, top: 32, driftX: 24, driftY: 30, duration: 6.2, delay: 0 },
-  { size: 22, left: 32, top: 58, driftX: -22, driftY: 36, duration: 7.6, delay: 0.8 },
-  { size: 14, left: 46, top: 24, driftX: 18, driftY: 24, duration: 5.4, delay: 0.5 },
-  { size: 26, left: 64, top: 68, driftX: -30, driftY: 38, duration: 8.2, delay: 0.9 },
-  { size: 18, left: 78, top: 38, driftX: 22, driftY: 32, duration: 6.8, delay: 1.3 },
-  { size: 12, left: 52, top: 52, driftX: -16, driftY: 22, duration: 5.1, delay: 1.8 },
-  { size: 24, left: 26, top: 72, driftX: 24, driftY: 34, duration: 7.2, delay: 0.2 },
-  { size: 15, left: 70, top: 22, driftX: -20, driftY: 24, duration: 5.9, delay: 0.9 },
-];
+const BUBBLE_COUNT = 10;
+const MAX_BUBBLE_SIZE = 46;
+const MIN_BUBBLE_SIZE = 18;
+const MAX_BUBBLE_VELOCITY = 0.065;
+const MIN_BUBBLE_VELOCITY = 0.025;
+
+const createBubbleConfigs = (count: number, maxSize: number, maxVelocity: number): BubbleConfig[] => {
+  const minSize = Math.min(MIN_BUBBLE_SIZE, maxSize * 0.45);
+  const minVelocity = Math.min(MIN_BUBBLE_VELOCITY, maxVelocity * 0.35);
+
+  return Array.from({ length: count }, () => {
+    const size = minSize + Math.random() * (maxSize - minSize);
+    const angle = Math.random() * Math.PI * 2;
+    const speed = minVelocity + Math.random() * (maxVelocity - minVelocity);
+    return {
+      size,
+      initialX: Math.random() * 100,
+      initialY: Math.random() * 100,
+      velocityX: Math.cos(angle) * speed,
+      velocityY: Math.sin(angle) * speed,
+      speedVariance: speed * 0.6,
+    } satisfies BubbleConfig;
+  });
+};
 
 const BACKGROUND_BLOB_BASES = [
   { x: 22, y: 20, strength: 1.2 },
@@ -85,6 +98,7 @@ export default function PublicPage({ heroTitle, heroSubtitle }: PublicPageProps)
   const sectionRefs = useRef<(HTMLElement | null)[]>([]);
   const heroSectionRef = useRef<HTMLElement | null>(null);
   const backgroundRef = useRef<HTMLDivElement | null>(null);
+  const bubbleRefs = useRef<(HTMLSpanElement | null)[]>([]);
   const [activeIndex, setActiveIndex] = useState(0);
   const [indicatorReady, setIndicatorReady] = useState(false);
   const [indicatorVisible, setIndicatorVisible] = useState(false);
@@ -108,12 +122,17 @@ export default function PublicPage({ heroTitle, heroSubtitle }: PublicPageProps)
     return {} as Record<string, string>;
   }, [languageLabelsRaw]);
 
+  const bubbleConfigs = useMemo(
+    () => createBubbleConfigs(BUBBLE_COUNT, MAX_BUBBLE_SIZE, MAX_BUBBLE_VELOCITY),
+    [],
+  );
+
   const clearHideTimer = useCallback(() => {
     if (hideTimerRef.current) {
       clearTimeout(hideTimerRef.current);
       hideTimerRef.current = null;
     }
-  }, []);
+  }, [bubbleConfigs]);
 
   const scheduleHideIndicator = useCallback(() => {
     if (indicatorLockedRef.current) return;
@@ -194,6 +213,128 @@ export default function PublicPage({ heroTitle, heroSubtitle }: PublicPageProps)
   }, [activateIndicator]);
 
   useEffect(() => () => clearHideTimer(), [clearHideTimer]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') {
+      return undefined;
+    }
+
+    const wrapCoordinate = (value: number) => {
+      const min = -18;
+      const max = 118;
+      const span = max - min;
+      if (value < min) {
+        return value + span;
+      }
+      if (value > max) {
+        return value - span;
+      }
+      return value;
+    };
+
+    const speedMultiplier = 1.5;
+    const bubbleStates = bubbleConfigs.map((bubble) => {
+      const baseVx = bubble.velocityX * speedMultiplier;
+      const baseVy = bubble.velocityY * speedMultiplier;
+      return {
+        x: bubble.initialX,
+        y: bubble.initialY,
+        vx: baseVx,
+        vy: baseVy,
+        targetVx: baseVx,
+        targetVy: baseVy,
+        baseVx,
+        baseVy,
+        size: bubble.size,
+      };
+    });
+
+    const bubbleElements = bubbleRefs.current.map((bubbleEl) => bubbleEl);
+    const clickHandlers: Array<((event: MouseEvent) => void) | null> = [];
+
+    bubbleElements.forEach((bubbleEl, index) => {
+      const state = bubbleStates[index];
+      if (!bubbleEl || !state) return;
+      bubbleEl.style.willChange = 'transform';
+      bubbleEl.style.transform = `translate3d(calc(${state.x}vw - ${state.size / 2}px), calc(${state.y}vh - ${state.size / 2}px), 0)`;
+
+      const handleClick = () => {
+        const currentSpeed = Math.hypot(state.vx, state.vy) || Math.hypot(state.baseVx, state.baseVy) || 0.04;
+        const doubledSpeed = currentSpeed * 2;
+        const dirX = state.vx || state.baseVx;
+        const dirY = state.vy || state.baseVy;
+        const directionLength = Math.hypot(dirX, dirY) || 1;
+        const normX = dirX / directionLength;
+        const normY = dirY / directionLength;
+
+        state.vx = normX * doubledSpeed;
+        state.vy = normY * doubledSpeed;
+        state.targetVx = state.baseVx;
+        state.targetVy = state.baseVy;
+      };
+
+      bubbleEl.addEventListener('click', handleClick);
+      clickHandlers[index] = handleClick;
+    });
+
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    if (prefersReducedMotion.matches) {
+      return undefined;
+    }
+
+    const intervalHandles: number[] = bubbleStates.map((state, index) =>
+      window.setInterval(() => {
+        const config = bubbleConfigs[index];
+        const range = config.speedVariance;
+        const jitterMultiplier = 2;
+        const nextTargetVx = (config.velocityX + (Math.random() - 0.5) * range * jitterMultiplier) * speedMultiplier;
+        const nextTargetVy = (config.velocityY + (Math.random() - 0.5) * range * jitterMultiplier) * speedMultiplier;
+        state.targetVx = nextTargetVx;
+        state.targetVy = nextTargetVy;
+        state.baseVx = nextTargetVx;
+        state.baseVy = nextTargetVy;
+      }, 3800 + Math.random() * 3600),
+    );
+
+    let animationFrame: number | undefined;
+
+    const step = () => {
+      bubbleElements.forEach((bubbleEl, index) => {
+        const state = bubbleStates[index];
+        if (!bubbleEl || !state) return;
+
+        state.vx += (state.targetVx - state.vx) * 0.02;
+        state.vy += (state.targetVy - state.vy) * 0.02;
+
+        state.x += state.vx;
+        state.y += state.vy;
+
+        state.x = wrapCoordinate(state.x);
+        state.y = wrapCoordinate(state.y);
+
+        bubbleEl.style.transform = `translate3d(calc(${state.x}vw - ${state.size / 2}px), calc(${state.y}vh - ${state.size / 2}px), 0)`;
+      });
+
+      animationFrame = requestAnimationFrame(step);
+    };
+
+    animationFrame = requestAnimationFrame(step);
+
+    return () => {
+      if (animationFrame) {
+        cancelAnimationFrame(animationFrame);
+      }
+      intervalHandles.forEach((handle) => {
+        window.clearInterval(handle);
+      });
+      bubbleElements.forEach((bubbleEl, index) => {
+        const handler = clickHandlers[index];
+        if (bubbleEl && handler) {
+          bubbleEl.removeEventListener('click', handler);
+        }
+      });
+    };
+  }, []);
 
   const handleIndicatorEnter = useCallback(() => {
     indicatorLockedRef.current = true;
@@ -390,19 +531,17 @@ export default function PublicPage({ heroTitle, heroSubtitle }: PublicPageProps)
     <div className={styles.wrapper}>
       <div ref={backgroundRef} className={styles.backgroundCanvas} aria-hidden="true" />
       <div className={styles.bubbleField} aria-hidden="true">
-        {FLOATING_BUBBLES.map((bubble, bubbleIndex) => (
+        {bubbleConfigs.map((bubble, bubbleIndex) => (
           <span
-            key={`${bubble.left}-${bubble.top}-${bubbleIndex}`}
+            key={`${bubble.initialX}-${bubble.initialY}-${bubble.size}-${bubbleIndex}`}
             className={styles.bubble}
+            ref={(element) => {
+              bubbleRefs.current[bubbleIndex] = element;
+            }}
             style={
               {
                 '--bubble-size': `${bubble.size}px`,
-                '--bubble-left': `${bubble.left}%`,
-                '--bubble-top': `${bubble.top}%`,
-                '--bubble-drift-x': `${bubble.driftX}px`,
-                '--bubble-drift-y': `${bubble.driftY}px`,
-                '--bubble-duration': `${bubble.duration}s`,
-                '--bubble-delay': `${bubble.delay}s`,
+                transform: `translate3d(calc(${bubble.initialX}vw - ${bubble.size / 2}px), calc(${bubble.initialY}vh - ${bubble.size / 2}px), 0)`,
               } as CSSProperties
             }
           />
@@ -440,6 +579,7 @@ export default function PublicPage({ heroTitle, heroSubtitle }: PublicPageProps)
               data-section-id={section.id}
             >
               <div className={styles.sectionInner}>
+                {isHero ? <span className={styles.heroBubble} aria-hidden="true" /> : null}
                 <h2 className={index === 0 ? styles.heroTitle : styles.sectionTitle}>{title}</h2>
                 <p className={styles.sectionBody}>{body}</p>
 

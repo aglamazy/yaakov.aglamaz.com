@@ -1,5 +1,5 @@
 import { ACCESS_TOKEN } from '@/auth/cookies';
-import { apiFetchFromMiddleware, verifyAccessToken } from 'src/lib/edgeAuth';
+import { verifyAccessToken } from 'src/lib/edgeAuth';
 import { NextRequest, NextResponse } from 'next/server';
 
 const PUBLIC_PATHS = [
@@ -11,9 +11,6 @@ const PUBLIC_PATHS = [
   '/locales',
   '/auth-gate',
   '/app',
-  '/blog/family',
-  '/blog/author',
-  '/invite',
   '/sitemap.xml',
   '/robots.txt',
   '/terms',
@@ -59,7 +56,7 @@ export async function middleware(request: NextRequest) {
         return NextResponse.json({ error: 'Credentials setup required' }, { status: 403 });
       }
 
-      if (!isCredentialPage && !pathname.startsWith('/invite')) {
+      if (!isCredentialPage) {
         return NextResponse.redirect(new URL('/welcome/credentials', request.url));
       }
     }
@@ -67,28 +64,6 @@ export async function middleware(request: NextRequest) {
     if (PUBLIC_REDIRECT_PATHS.includes(pathname)) {
       const target = needsCredentialSetup ? '/welcome/credentials' : '/app';
       return NextResponse.redirect(new URL(target, request.url));
-    }
-
-    if (!isPublic) {
-      const siteId = process.env.NEXT_SITE_ID!;
-      const res = await apiFetchFromMiddleware(request, `/api/user/member-info?siteId=${siteId}`);
-
-      if (res instanceof NextResponse) {
-        return res;
-      }
-
-      if (!res.ok) {
-        return NextResponse.next();
-      }
-
-      const memberRes = await res.json();
-      const ok =
-        memberRes?.success &&
-        memberRes?.member &&
-        ['member', 'admin'].includes(memberRes.member.role);
-      if (!ok) {
-        return NextResponse.next();
-      }
     }
 
     return NextResponse.next();
