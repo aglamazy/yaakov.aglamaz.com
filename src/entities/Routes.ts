@@ -21,6 +21,7 @@ export enum AppRoute {
 export enum ApiRoute {
   // Auth routes
   AUTH_ME = 'AUTH_ME',
+  AUTH_ME_FIREBASE_TOKEN = 'AUTH_ME_FIREBASE_TOKEN',
   AUTH_LOGOUT = 'AUTH_LOGOUT',
   AUTH_REFRESH = 'AUTH_REFRESH',
   AUTH_LOGIN = 'AUTH_LOGIN',

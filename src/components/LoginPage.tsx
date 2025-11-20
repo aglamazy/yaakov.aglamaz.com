@@ -17,7 +17,7 @@ import { useSiteStore } from '@/store/SiteStore';
 import { getLocalizedSiteName } from '@/utils/siteName';
 import { useUserStore } from '@/store/UserStore';
 import { useLoginModalStore } from '@/store/LoginModalStore';
-import SignupForm from '@/components/SignupForm';
+// import SignupForm from '@/components/SignupForm'; // TODO: Re-enable when signup is implemented
 import { useTranslation } from 'react-i18next';
 import { usePendingMemberModalStore } from '@/store/PendingMemberModalStore';
 
@@ -200,15 +200,17 @@ export default function LoginPage({ redirectPath = '/admin', onAuthenticated }: 
   };
 
   if (showSignup) {
-    return (
-      <SignupForm
-        onSuccess={() => {
-          closeLogin();
-          openPending();
-        }}
-        onCancel={() => setShowSignup(false)}
-      />
-    );
+    // TODO: Re-enable when signup is implemented
+    return <div>Signup form coming soon</div>;
+    // return (
+    //   <SignupForm
+    //     onSuccess={() => {
+    //       closeLogin();
+    //       openPending();
+    //     }}
+    //     onCancel={() => setShowSignup(false)}
+    //   />
+    // );
   }
 
   return (

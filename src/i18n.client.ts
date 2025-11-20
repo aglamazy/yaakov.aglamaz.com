@@ -68,15 +68,7 @@ export function createI18nInstance({ locale, resources }: CreateI18nOptions): I1
 
   // Preload translations from Firebase Storage (client-side only)
   if (typeof window !== 'undefined') {
-    clientTranslationService.preload(locale).then(translations => {
-      if (translations && typeof translations === 'object') {
-        Object.entries(translations).forEach(([key, entry]) => {
-          if (entry && entry.text) {
-            instance.addResource(locale, 'common', key, entry.text);
-          }
-        });
-      }
-    }).catch(error => {
+    clientTranslationService.preload(locale).catch(error => {
       console.error('[i18n] Failed to preload translations:', error);
     });
   }

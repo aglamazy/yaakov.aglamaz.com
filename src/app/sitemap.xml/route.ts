@@ -1,5 +1,5 @@
 import { NextRequest } from 'next/server';
-import { BlogRepository } from '@/repositories/BlogRepository';
+// import { BlogRepository } from '@/repositories/BlogRepository'; // TODO: Re-enable when blog is implemented
 
 export const dynamic = 'force-dynamic';
 
@@ -9,27 +9,30 @@ function xmlEscape(s: string) {
 
 export async function GET(req: NextRequest) {
   try {
-    const siteId = process.env.NEXT_SITE_ID || '';
     const url = new URL(req.url);
     const base = (process.env.NEXT_PUBLIC_APP_URL || `${url.origin}`)?.replace(/\/+$/, '');
 
-    const repo = new BlogRepository();
-
     const urls: { loc: string; lastmod?: string }[] = [];
     urls.push({ loc: `${base}/` });
-    urls.push({ loc: `${base}/contact` });
-    urls.push({ loc: `${base}/terms` });
+    urls.push({ loc: `${base}/he` });
+    urls.push({ loc: `${base}/en` });
+    urls.push({ loc: `${base}/tr` });
+    urls.push({ loc: `${base}/ar` });
+    urls.push({ loc: `${base}/he/terms` });
+    urls.push({ loc: `${base}/en/terms` });
 
-    try {
-      const posts = await repo.getPublicBySite(siteId, 5);
-      posts.forEach((post) => {
-        if (!post.id) return;
-        const lastmod = (post.updatedAt as any)?.toDate?.()?.toISOString?.() ?? undefined;
-        urls.push({ loc: `${base}/public/blog/${encodeURIComponent(post.id)}`, lastmod });
-      });
-    } catch (error) {
-      console.warn('Failed to include blog posts in sitemap', error);
-    }
+    // TODO: Re-enable when blog is implemented
+    // const repo = new BlogRepository();
+    // try {
+    //   const posts = await repo.getPublicBySite(siteId, 5);
+    //   posts.forEach((post) => {
+    //     if (!post.id) return;
+    //     const lastmod = (post.updatedAt as any)?.toDate?.()?.toISOString?.() ?? undefined;
+    //     urls.push({ loc: `${base}/public/blog/${encodeURIComponent(post.id)}`, lastmod });
+    //   });
+    // } catch (error) {
+    //   console.warn('Failed to include blog posts in sitemap', error);
+    // }
 
     const body = [
       '<?xml version="1.0" encoding="UTF-8"?>',

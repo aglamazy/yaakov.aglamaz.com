@@ -25,7 +25,7 @@ export function withMemberGuard(handler: RouteHandler): RouteHandler {
         initAdmin();
         db = getFirestore();
       }
-      const cookieStore = getCookies();
+      const cookieStore = await getCookies();
       const token = cookieStore.get(ACCESS_TOKEN)?.value;
       const payload = token && verifyAccessToken(token);
       if (!payload) {

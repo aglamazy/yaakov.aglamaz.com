@@ -7,13 +7,13 @@ const AccessMinutes = 120;
 const RefreshDays = 30;
 
 /** Set auth cookies for access and optional refresh tokens. */
-export function setAuthCookies(res: NextResponse, access: string, refresh?: string) {
+export function setAuthCookies(res: NextResponse, access: string, refresh?: string, accessMinutes?: number, refreshDays?: number) {
   res.cookies.set(ACCESS_TOKEN, access, {
     httpOnly: true,
     secure: isProd,
     path: '/',
     sameSite: 'lax',
-    maxAge: 60 * AccessMinutes
+    maxAge: 60 * (accessMinutes ?? AccessMinutes)
   });
   if (refresh) {
     res.cookies.set(REFRESH_TOKEN, refresh, {
@@ -21,7 +21,7 @@ export function setAuthCookies(res: NextResponse, access: string, refresh?: stri
       secure: isProd,
       path: '/api/auth/refresh',
       sameSite: 'lax',
-      maxAge: 60 * 60 * 24 * RefreshDays
+      maxAge: 60 * 60 * 24 * (refreshDays ?? RefreshDays)
     });
   }
 }

@@ -3,7 +3,7 @@ import { getAuth } from 'firebase-admin/auth';
 import { getFirestore, Timestamp } from 'firebase-admin/firestore';
 import nextI18NextConfig from '../../next-i18next.config.js';
 import { ConfigRepository } from '@/repositories/ConfigRepository';
-import { TranslationService } from '@/services/TranslationService';
+// import { TranslationService } from '@/services/TranslationService'; // TODO: Re-enable when translation service is implemented
 import { ensureFirebaseAdminEnv } from '@/lib/env/ensureFirebaseEnv';
 
 // Validate Firebase admin environment variables
@@ -57,27 +57,31 @@ async function ensureSiteNameTranslations(siteId: string, siteName?: string | nu
   for (const locale of SUPPORTED_LOCALES) {
     if (translations[locale]) continue;
 
-    if (!TranslationService.isEnabled()) {
-      translations[locale] = siteName;
-      updated = true;
-      continue;
-    }
+    // TODO: Re-enable when TranslationService is implemented
+    translations[locale] = siteName;
+    updated = true;
 
-    try {
-      const result = await TranslationService.translateHtml({
-        title: siteName,
-        content: '',
-        to: locale,
-        from: undefined,
-      });
-      const translated = result.title?.trim() || siteName;
-      translations[locale] = translated;
-      updated = true;
-    } catch (error) {
-      console.error(`[site] failed to translate site name to ${locale}`, error);
-      translations[locale] = siteName;
-      updated = true;
-    }
+    // if (!TranslationService.isEnabled()) {
+    //   translations[locale] = siteName;
+    //   updated = true;
+    //   continue;
+    // }
+
+    // try {
+    //   const result = await TranslationService.translateHtml({
+    //     title: siteName,
+    //     content: '',
+    //     to: locale,
+    //     from: undefined,
+    //   });
+    //   const translated = result.title?.trim() || siteName;
+    //   translations[locale] = translated;
+    //   updated = true;
+    // } catch (error) {
+    //   console.error(`[site] failed to translate site name to ${locale}`, error);
+    //   translations[locale] = siteName;
+    //   updated = true;
+    // }
   }
 
   if (!translations.en && siteName) {

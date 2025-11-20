@@ -10,10 +10,7 @@ export interface JwtRegisteredClaims {
 
 export interface AppClaims {
   userId: string;
-  siteId: string;
-  role: string;
-  firstName: string;
-  lastName?: string;
+  role?: string;
   email?: string;
   email_verified?: boolean;
   name?: string;

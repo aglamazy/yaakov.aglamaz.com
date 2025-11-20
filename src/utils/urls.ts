@@ -74,6 +74,7 @@ export function getPath(
 export const apiRoutePaths: Record<ApiRoute, string> = {
   // Auth routes
   [ApiRoute.AUTH_ME]: '/api/auth/me',
+  [ApiRoute.AUTH_ME_FIREBASE_TOKEN]: '/api/auth/me/firebase-token',
   [ApiRoute.AUTH_LOGOUT]: '/api/auth/logout',
   [ApiRoute.AUTH_REFRESH]: '/api/auth/refresh',
   [ApiRoute.AUTH_LOGIN]: '/api/auth/login',

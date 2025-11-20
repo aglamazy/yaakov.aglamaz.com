@@ -138,10 +138,12 @@ export default function PublicPage({ heroTitle, heroSubtitle }: PublicPageProps)
     return {} as Record<string, string>;
   }, [languageLabelsRaw]);
 
-  const bubbleConfigs = useMemo(
-    () => createBubbleConfigs(BUBBLE_COUNT, MAX_BUBBLE_SIZE, MAX_BUBBLE_VELOCITY),
-    [],
-  );
+  const [bubbleConfigs, setBubbleConfigs] = useState<BubbleConfig[]>([]);
+
+  useEffect(() => {
+    // Generate bubbles only on client after mount to avoid hydration mismatch
+    setBubbleConfigs(createBubbleConfigs(BUBBLE_COUNT, MAX_BUBBLE_SIZE, MAX_BUBBLE_VELOCITY));
+  }, []);
 
   const clearHideTimer = useCallback(() => {
     if (hideTimerRef.current) {
@@ -231,7 +233,7 @@ export default function PublicPage({ heroTitle, heroSubtitle }: PublicPageProps)
   useEffect(() => () => clearHideTimer(), [clearHideTimer]);
 
   useEffect(() => {
-    if (typeof window === 'undefined') {
+    if (typeof window === 'undefined' || bubbleConfigs.length === 0) {
       return undefined;
     }
 
@@ -378,7 +380,7 @@ export default function PublicPage({ heroTitle, heroSubtitle }: PublicPageProps)
         }
       });
     };
-  }, []);
+  }, [bubbleConfigs]);
 
   const handleIndicatorEnter = useCallback(() => {
     indicatorLockedRef.current = true;
