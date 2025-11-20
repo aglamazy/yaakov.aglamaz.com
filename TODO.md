@@ -40,3 +40,30 @@
 - Adjust TTL and background interval based on observed churn.
 
 ## When refresh token is needed, it is done correctly, but the page is not redirected to /app
+
+---
+
+# Translation System Optimization
+
+## Summary
+Currently, the server injects ALL translations from the locale JSON file into every page, regardless of which keys are actually used on that page. This can become inefficient as the translation file grows.
+
+## Proposed Optimization
+- Add a page key mapping system to track which translation keys are used on each page/route
+- Server only injects translations relevant to the current page
+- Reduces initial page payload and improves performance
+
+## Implementation Ideas
+- Create a mapping file: `translations-map.json` → `{ "/admin": ["adminDashboard", "staffManagement"], "/admin/settings": [...] }`
+- Build time: scan components to extract `t('...')` calls and map to routes
+- Runtime: server uses route to lookup required keys and inject only those
+- Fallback: if key not in page map, still do JIT translation on client
+
+## Benefits
+- Smaller initial payload per page
+- Faster hydration
+- More scalable as translation files grow
+- Still maintains JIT for dynamic/new keys
+
+## Status
+- [ ] Not yet implemented - future optimization
