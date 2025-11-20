@@ -213,10 +213,14 @@ export default function LoginPage({ redirectPath = '/admin', onAuthenticated }: 
     // );
   }
 
+  const rtlLocales = ['he', 'ar'];
+  const currentLang = i18n.language?.split('-')[0] || 'he';
+  const dir = rtlLocales.includes(currentLang) ? 'rtl' : 'ltr';
+
   return (
     <div
       className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8 flex flex-col items-center"
-      dir={i18n.dir()}
+      dir={dir}
       lang={i18n.language}
     >
       {/* Logo */}
