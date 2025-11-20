@@ -2,6 +2,7 @@ import './globals.css';
 import I18nProvider from '../components/I18nProvider';
 import I18nGate from '../components/I18nGate';
 import { fetchSiteInfo } from '../firebase/admin';
+import { headers } from 'next/headers';
 import type { Metadata } from 'next';
 
 const GOOGLE_VERIFICATION = process.env.GOOGLE_SITE_VERIFICATION || '';
@@ -28,27 +29,21 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  let siteInfo = null;
-  try {
-    siteInfo = await fetchSiteInfo();
-  } catch (error) {
-    console.error('Failed to fetch site info:', error);
-    throw error;
-  }
+  // Note: siteInfo injection moved to section-specific layouts (/admin, /[locale])
+  // where locale context is available for proper localization
+
+  // Get locale from proxy header
+  const headerStore = await headers();
+  const locale = headerStore.get('x-locale') || 'he';
+
+  // Set RTL direction for Hebrew and Arabic
+  const rtlLocales = ['he', 'ar'];
+  const dir = rtlLocales.includes(locale) ? 'rtl' : 'ltr';
 
   return (
-    <html lang="en">
+    <html dir={dir} lang={locale}>
       <body>
-        {/* Inject siteInfo for client-side access */}
-        <script
-          id="__SITE_INFO__"
-          dangerouslySetInnerHTML={{
-            __html: `window.__SITE_INFO__=${JSON.stringify(siteInfo || {})};`,
-          }}
-        />
-        <I18nProvider>
-          <I18nGate>{children}</I18nGate>
-        </I18nProvider>
+        {children}
       </body>
     </html>
   );
