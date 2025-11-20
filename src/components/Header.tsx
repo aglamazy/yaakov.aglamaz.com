@@ -3,29 +3,22 @@
 import React, { useState, useRef, useEffect } from "react";
 import Navigation from "@/components/Navigation";
 import { useTranslation } from 'react-i18next';
-import { LogOut, Home as HomeIcon } from 'lucide-react';
+import { LogOut, Users, User } from 'lucide-react';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import { IUser } from "@/entities/User";
-import { IMember } from "@/entities/Member";
-import { ISite } from "@/entities/Site";
+import { IStaff } from "@/entities/Staff";
 import { useLoginModalStore } from '@/store/LoginModalStore';
-import { getLocalizedSiteName } from '@/utils/siteName';
-import MemberAvatar from '@/components/MemberAvatar';
-
-const LANGS = [
-  { code: 'he', label: 'עברית', flag: '🇮🇱' },
-  { code: 'en', label: 'English', flag: '🇬🇧' },
-  { code: 'tr', label: 'Türkçe', flag: '🇹🇷' },
-];
+import { useEditUserModalStore } from '@/store/EditUserModalStore';
+import { DEFAULT_LOCALE, SUPPORTED_LOCALES } from '@/i18n';
+import { LANGUAGES } from '@/constants/languages';
 
 interface HeaderProps {
   user?: IUser;
-  member?: IMember;
+  staff?: IStaff;
   onLogout?: () => void;
-  siteInfo: ISite;
 }
 
-export default function Header({ user, member, onLogout, siteInfo }: HeaderProps) {
+export default function Header({ user, staff, onLogout }: HeaderProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isLangMenuOpen, setIsLangMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
@@ -35,7 +28,10 @@ export default function Header({ user, member, onLogout, siteInfo }: HeaderProps
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const openLogin = useLoginModalStore((s) => s.open);
-  const localizedName = getLocalizedSiteName(siteInfo, i18n.language);
+  const openEdit = useEditUserModalStore((s) => s.open);
+
+  // Get staff name from locales
+  const staffName = staff?.locales?.[staff.primaryLocale]?.name || user?.name || 'Yaakov Aglamaz';
 
   useEffect(() => {
     function handleClickOutside(event) {
@@ -52,47 +48,72 @@ export default function Header({ user, member, onLogout, siteInfo }: HeaderProps
     };
   }, [isUserMenuOpen]);
 
+  const normalizedLocale = (i18n.language || '').split('-')[0];
+  const currentLocale = SUPPORTED_LOCALES.includes(normalizedLocale) ? normalizedLocale : DEFAULT_LOCALE;
+
   const handleLangChange = (lang: string) => {
-    if (i18n.language !== lang) {
-      i18n.changeLanguage(lang);
+    const targetLocale = SUPPORTED_LOCALES.includes(lang) ? lang : DEFAULT_LOCALE;
+
+    // Set dir attribute immediately before navigation to prevent layout shift
+    const rtlLocales = ['he', 'ar'];
+    const newDir = rtlLocales.includes(targetLocale) ? 'rtl' : 'ltr';
+    if (typeof document !== 'undefined') {
+      document.documentElement.dir = newDir;
+      document.documentElement.lang = targetLocale;
     }
-    // Reflect selection in URL so server components (public pages) render the chosen language
+
+    if (i18n.language !== targetLocale) {
+      i18n.changeLanguage(targetLocale);
+    }
+
     try {
-      const params = new URLSearchParams(searchParams?.toString() || '');
-      params.set('lang', lang);
-      const newUrl = `${pathname}?${params.toString()}`;
-      router.replace(newUrl, { scroll: false });
-      router.refresh();
-    } catch {}
+      const currentPath = pathname || '/';
+      const isPrivateRoute = currentPath.startsWith('/app') || currentPath.startsWith('/admin');
+      if (isPrivateRoute) {
+        const params = new URLSearchParams(searchParams?.toString());
+        params.set('locale', targetLocale);
+        const queryString = params.toString();
+        const nextUrl = queryString ? `${currentPath}?${queryString}` : currentPath;
+        router.replace(nextUrl, { scroll: false });
+        router.refresh();
+      } else {
+        const segments = currentPath.split('/').filter(Boolean);
+        let nextPath = currentPath;
+
+        if (segments.length > 0 && SUPPORTED_LOCALES.includes(segments[0])) {
+          const rest = segments.slice(1).join('/');
+          nextPath = `/${targetLocale}${rest ? `/${rest}` : ''}`;
+        } else if (segments.length === 0) {
+          nextPath = `/${targetLocale}`;
+        }
+
+        if (nextPath !== currentPath) {
+          router.replace(nextPath, { scroll: false });
+        } else {
+          router.replace(currentPath, { scroll: false });
+        }
+        router.refresh();
+      }
+    } catch (error) {
+      console.error('[Header] failed to update locale path', error);
+    }
+
     setIsLangMenuOpen(false);
   };
 
   const menuPosition = i18n.language === 'he' ? 'left-0' : 'right-0';
+
+  // Show "Start" button only on landing page (e.g., /en, /he)
+  const isLandingPage = pathname && /^\/[a-z]{2}\/?$/.test(pathname);
+
   return (
     <header className="w-full flex items-center justify-between px-4 py-2 bg-white shadow-sm sticky top-0 z-50">
       {/* Left: Site title */}
       <div className="text-xl font-semibold text-sage-700">
-        {localizedName || siteInfo.name}
+        {staffName}
       </div>
-      {/* Center: Navigation */}
-      <div className="flex flex-row items-center">
-        {user && member && onLogout && member.role !== 'pending' ? (
-          <Navigation user={user} onLogout={onLogout} setMobileMenuOpen={setMobileMenuOpen}/>
-        ) : (
-          <nav className="hidden md:flex items-center gap-6 text-sage-700">
-            {(() => { const isRTL = (i18n.language || '').startsWith('he'); return (
-              <>
-                <a className="hover:underline flex items-center gap-1" href="/">
-                  {isRTL ? (<><span>{t('home') as string}</span><HomeIcon size={18} /></>) : (<><HomeIcon size={18} /><span>{t('home') as string}</span></>)}
-                </a>
-                <a className="hover:underline flex items-center gap-1" href="/contact">
-                  {/*{isRTL ? (<><span>{t('contactUs') as string}</span><MessageCircle size={18} /></>) : (<><MessageCircle size={18} /><span>{t('contactUs') as string}</span></>)}*/}
-                </a>
-              </>
-            ); })()}
-          </nav>
-        )}
-      </div>
+      {/* Center: Empty for admin area */}
+      <div className="flex-1"></div>
       {/* Right: Flags + Avatar */}
       <div className="flex items-center gap-2 relative">
         {/* Language Selector */}
@@ -102,16 +123,16 @@ export default function Header({ user, member, onLogout, siteInfo }: HeaderProps
             className="h-8 w-8 rounded-full flex items-center justify-center text-xl bg-gray-100 hover:bg-gray-200 border border-gray-300"
             aria-label={t('changeLanguage') as string}
           >
-            {LANGS.find(l => l.code === i18n.language)?.flag || '🌐'}
+            {LANGUAGES.find(l => l.code === currentLocale)?.flag || '🌐'}
           </button>
           {isLangMenuOpen && (
             <div className={`language-menu ${menuPosition}`}>
               <div className="py-1 flex flex-col">
-                {LANGS.map(({ code, label, flag }) => (
+                {LANGUAGES.map(({ code, label, flag }) => (
                   <button
                     key={code}
                     onClick={() => handleLangChange(code)}
-                    className={`language-menu-item ${i18n.language === code ? 'font-bold' : ''}`}
+                    className={`language-menu-item ${currentLocale === code ? 'font-bold' : ''}`}
                   >
                     <span>{flag}</span>
                     <span>{label}</span>
@@ -122,20 +143,36 @@ export default function Header({ user, member, onLogout, siteInfo }: HeaderProps
           )}
         </div>
         {/* Avatar + User Menu */}
-        {user && member && onLogout ? (
+        {user && staff && onLogout ? (
         <div className="relative" ref={userMenuRef}>
             <button
               onClick={() => setIsUserMenuOpen((v) => !v)}
-              className="h-8 w-8 rounded-full overflow-hidden focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sage-500 transition-colors duration-200"
+              className="h-8 w-8 rounded-full bg-sage-600 text-white flex items-center justify-center font-semibold focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sage-500 transition-colors duration-200"
               aria-label={t('userMenu') as string}
             >
-              <MemberAvatar member={member} fallbackName={user?.name} fallbackEmail={member?.email || user?.email} size={32} />
+              {staff.avatarUrl ? (
+                <img src={staff.avatarUrl} alt={staffName} className="h-8 w-8 rounded-full" />
+              ) : (
+                <span>{staffName.charAt(0).toUpperCase()}</span>
+              )}
             </button>
             {isUserMenuOpen && (
               <div
                 className={`origin-top-right absolute ${menuPosition} mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-50`}>
                 <div className="py-1">
-                  {/* Admin menu items if member is admin */}
+                  {/* Admin menu items */}
+                  {staff && (
+                    <button
+                      onClick={() => {
+                        setIsUserMenuOpen(false);
+                        router.push('/admin/staff');
+                      }}
+                      className="flex items-center w-full px-4 py-2 text-sm text-green-700 hover:bg-green-50 transition-colors duration-200"
+                    >
+                      <Users size={16} className="mr-3"/>
+                      {t('staffManagement')}
+                    </button>
+                  )}
                   <button
                     onClick={() => {
                       setIsUserMenuOpen(false);
@@ -153,7 +190,7 @@ export default function Header({ user, member, onLogout, siteInfo }: HeaderProps
         ) : (
           <button
             onClick={openLogin}
-            className="h-8 px-3 rounded-full bg-sage-600 text-white text-sm"
+            className="h-8 px-3 rounded-full bg-sage-600 text-white text-sm whitespace-nowrap"
           >
             {t('signIn')}
           </button>
