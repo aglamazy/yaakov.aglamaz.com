@@ -26,7 +26,7 @@ interface LoginPageProps {
   onAuthenticated?: () => void | Promise<void>;
 }
 
-export default function LoginPage({ redirectPath = '/app', onAuthenticated }: LoginPageProps = {}) {
+export default function LoginPage({ redirectPath = '/admin', onAuthenticated }: LoginPageProps = {}) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);

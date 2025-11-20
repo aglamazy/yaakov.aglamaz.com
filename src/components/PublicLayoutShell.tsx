@@ -10,10 +10,12 @@ import styles from './PublicLayoutShell.module.css';
 
 interface PublicLayoutShellProps {
   siteInfo: ISite | null;
+  locale: string;
+  resolvedLocale: string;
   children: React.ReactNode;
 }
 
-export default function PublicLayoutShell({ siteInfo, children }: PublicLayoutShellProps) {
+export default function PublicLayoutShell({ siteInfo, locale, resolvedLocale, children }: PublicLayoutShellProps) {
   const { isOpen, close } = useLoginModalStore();
   const setSiteInfo = useSiteStore((s) => s.setSiteInfo);
 

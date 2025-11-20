@@ -1,5 +1,3 @@
-import {PRODUCT_NAME} from "@/constants";
-
 export interface JwtRegisteredClaims {
   iss?: string;
   sub?: string;
@@ -17,6 +15,9 @@ export interface AppClaims {
   firstName: string;
   lastName?: string;
   email?: string;
+  email_verified?: boolean;
+  name?: string;
+  picture?: string;
   needsCredentialSetup?: boolean;
 }
 
@@ -29,7 +30,7 @@ export const inSeconds = (sec: number) => nowSeconds() + sec;
 export function buildAccessClaims(app: AppClaims, ttlSec: number): TokenClaims {
   return {
     sub: app.userId,
-    aud: 'app',
+    aud: "FamilyNet",
     iat: nowSeconds(),
     exp: inSeconds(ttlSec),
     ...app,
@@ -39,7 +40,7 @@ export function buildAccessClaims(app: AppClaims, ttlSec: number): TokenClaims {
 /** Build claims for refresh tokens. */
 export function buildRefreshClaims(app: AppClaims, days = 30, jti: string): TokenClaims {
   return {
-    iss: process.env.JWT_ISSUER || PRODUCT_NAME,
+    iss: process.env.JWT_ISSUER,
     sub: app.userId,
     aud: "refresh",
     iat: nowSeconds(),

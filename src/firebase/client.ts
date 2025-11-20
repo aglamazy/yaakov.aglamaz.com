@@ -14,21 +14,44 @@ const firebaseConfig = {
 export function initFirebase() {
   // Check if all required environment variables are present
   if (!process.env.NEXT_PUBLIC_FIREBASE_API_KEY) {
-    console.error('Firebase configuration is missing. Please set up your environment variables.');
-    return;
+    console.warn('[Firebase Client] Firebase configuration is missing. Auth features are disabled.');
+    return false;
   }
-  
+
   if (!getApps().length) {
     try {
       initializeApp(firebaseConfig);
+      return true;
     } catch (error) {
-      console.error('Failed to initialize Firebase:', error);
+      console.error('[Firebase Client] Failed to initialize Firebase:', error);
+      return false;
     }
   }
+  return true;
 }
 
-export const auth = () => getAuth();
-export const googleProvider = new GoogleAuthProvider();
+export const auth = () => {
+  if (!getApps().length) {
+    console.warn('[Firebase Client] Firebase not initialized. Call initFirebase() first.');
+    return null;
+  }
+  return getAuth();
+};
+
+// Only initialize Google provider if Firebase is configured
+let _googleProvider: GoogleAuthProvider | null = null;
+export const getGoogleProvider = () => {
+  if (!process.env.NEXT_PUBLIC_FIREBASE_API_KEY) {
+    return null;
+  }
+  if (!_googleProvider) {
+    _googleProvider = new GoogleAuthProvider();
+  }
+  return _googleProvider;
+};
+
+// Deprecated: Use getGoogleProvider() instead
+export const googleProvider = getGoogleProvider();
 // export const facebookProvider = new FacebookAuthProvider();
 
 // Ensures Firebase Auth is signed in using a custom token

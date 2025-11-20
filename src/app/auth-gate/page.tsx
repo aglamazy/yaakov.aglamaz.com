@@ -29,10 +29,10 @@ export default function AuthGate() {
           if (u?.user_id && siteId) await fetchMember(u.user_id, siteId);
           router.replace(originalUrl);
         } else {
-          router.replace('/app?login=1');
+          router.replace('/login?redirect=/admin');
         }
       } catch (err) {
-        router.replace('/app?login=1');
+        router.replace('/login?redirect=/admin');
         throw err;
       }
     })();

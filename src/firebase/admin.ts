@@ -6,18 +6,39 @@ import { ConfigRepository } from '@/repositories/ConfigRepository';
 import { TranslationService } from '@/services/TranslationService';
 import { ensureFirebaseAdminEnv } from '@/lib/env/ensureFirebaseEnv';
 
-ensureFirebaseAdminEnv();
+// Validate Firebase admin environment variables
+let isFirebaseAdminConfigured = false;
+try {
+  ensureFirebaseAdminEnv();
+  isFirebaseAdminConfigured = true;
+} catch (error) {
+  console.warn('[Firebase Admin] Firebase Admin SDK not configured:', (error as Error).message);
+  console.warn('[Firebase Admin] Server-side Firebase features are disabled.');
+}
 
 export function initAdmin() {
-  if (!getApps().length) {
-    initializeApp({
-      credential: cert({
-        projectId: process.env.FIREBASE_PROJECT_ID,
-        clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-        privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\n/g, '\n'),
-      }),
-    });
+  if (!isFirebaseAdminConfigured) {
+    console.warn('[Firebase Admin] Cannot initialize - missing configuration');
+    return false;
   }
+
+  if (!getApps().length) {
+    try {
+      initializeApp({
+        credential: cert({
+          projectId: process.env.FIREBASE_PROJECT_ID,
+          clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+          privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
+        }),
+        storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
+      });
+      return true;
+    } catch (error) {
+      console.error('[Firebase Admin] Failed to initialize:', error);
+      return false;
+    }
+  }
+  return true;
 }
 
 export const adminAuth = () => getAuth();
