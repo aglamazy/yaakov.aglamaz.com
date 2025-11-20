@@ -8,7 +8,7 @@
     "start": "next start -p 3100",
     "lint": "next lint",
     "test": "tsx tests/auth.test.ts",
-    "prepare": "husky"
+    "postinstall": "husky || true"
   },
   "dependencies": {
     "@tinymce/tinymce-react": "^6.3.0",
