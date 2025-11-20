@@ -2,6 +2,5 @@
 node_modules
 .env.local
 .env.local.backup
-.idea/ 
+.idea/
 tsconfig.tsbuildinfo
-
