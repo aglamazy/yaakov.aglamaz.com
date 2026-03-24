@@ -34,12 +34,41 @@ export async function GET(req: NextRequest) {
     //   console.warn('Failed to include blog posts in sitemap', error);
     // }
 
+    // Build hreflang alternate groups for locale pages
+    const locales = ['he', 'en', 'tr', 'ar'];
+    const localeGroups: { path: string; locales: string[] }[] = [
+      { path: '', locales }, // home pages: /he, /en, /tr, /ar
+      { path: '/terms', locales: ['he', 'en'] }, // terms pages
+    ];
+
+    const hreflangMap = new Map<string, { locale: string; href: string }[]>();
+    for (const group of localeGroups) {
+      const alternates = group.locales.map((loc) => ({
+        locale: loc,
+        href: `${base}/${loc}${group.path}`,
+      }));
+      // Add x-default pointing to the root or default locale
+      alternates.push({
+        locale: 'x-default',
+        href: group.path ? `${base}/he${group.path}` : `${base}/`,
+      });
+      for (const loc of group.locales) {
+        hreflangMap.set(`${base}/${loc}${group.path}`, alternates);
+      }
+    }
+
     const body = [
       '<?xml version="1.0" encoding="UTF-8"?>',
-      '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
+      '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">',
       ...urls.map(u => {
         const lines = [`  <url>`, `    <loc>${xmlEscape(u.loc)}</loc>`];
         if (u.lastmod) lines.push(`    <lastmod>${u.lastmod}</lastmod>`);
+        const alternates = hreflangMap.get(u.loc);
+        if (alternates) {
+          for (const alt of alternates) {
+            lines.push(`    <xhtml:link rel="alternate" hreflang="${alt.locale}" href="${xmlEscape(alt.href)}" />`);
+          }
+        }
         lines.push('  </url>');
         return lines.join('\n');
       }),

@@ -6,20 +6,35 @@ import { headers } from 'next/headers';
 import type { Metadata } from 'next';
 
 const GOOGLE_VERIFICATION = process.env.GOOGLE_SITE_VERIFICATION || '';
+const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://yaakov.aglamaz.com';
+
 export async function generateMetadata(): Promise<Metadata> {
   try {
     const siteInfo = await fetchSiteInfo();
-    const siteName = (siteInfo as any).name;
+    const siteName = (siteInfo as any)?.name || 'Portfolio';
+    const description = `${siteName} — personal portfolio and professional profile`;
     return {
+      metadataBase: new URL(BASE_URL),
       title: {
         default: siteName,
         template: `%s | ${siteName}`,
       },
+      description,
       icons: {
         icon: '/favicon.svg',
       },
       verification: {
         google: GOOGLE_VERIFICATION,
+      },
+      openGraph: {
+        type: 'website',
+        siteName,
+        title: siteName,
+        description,
+        url: BASE_URL,
+      },
+      alternates: {
+        canonical: '/',
       },
     };
   } catch (error) {
