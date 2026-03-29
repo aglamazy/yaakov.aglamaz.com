@@ -1,18 +1,15 @@
-'use client';
-
-import React from 'react';
-import { useTranslation } from 'react-i18next';
 import TermsEn from '@/components/legal/TermsContent.en';
 import TermsHe from '@/components/legal/TermsContent.he';
 import TermsTr from '@/components/legal/TermsContent.tr';
+import { DEFAULT_LOCALE, SUPPORTED_LOCALES } from '@/i18n';
 
-export default function TermsPage() {
-  const { i18n } = useTranslation();
+interface TermsPageProps {
+  params: Promise<{ locale: string }>;
+}
 
-  const lang = (i18n.language || '').split('-')[0];
-  if (!lang) {
-    throw new Error('Language not detected for Terms page');
-  }
+export default async function TermsPage({ params }: TermsPageProps) {
+  const { locale } = await params;
+  const lang = SUPPORTED_LOCALES.includes(locale) ? locale : DEFAULT_LOCALE;
 
   switch (lang) {
     case 'he':

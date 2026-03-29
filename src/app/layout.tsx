@@ -34,7 +34,7 @@ export async function generateMetadata(): Promise<Metadata> {
         url: BASE_URL,
       },
       alternates: {
-        canonical: '/',
+        canonical: '/he',
       },
     };
   } catch (error) {

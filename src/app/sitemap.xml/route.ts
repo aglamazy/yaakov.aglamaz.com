@@ -12,15 +12,17 @@ export async function GET(req: NextRequest) {
     const url = new URL(req.url);
     const base = (process.env.NEXT_PUBLIC_APP_URL || `${url.origin}`)?.replace(/\/+$/, '');
 
+    const today = new Date().toISOString().split('T')[0];
+
     const urls: { loc: string; lastmod?: string }[] = [];
-    urls.push({ loc: `${base}/` });
-    urls.push({ loc: `${base}/he` });
-    urls.push({ loc: `${base}/en` });
-    urls.push({ loc: `${base}/tr` });
-    urls.push({ loc: `${base}/ar` });
-    urls.push({ loc: `${base}/he/terms` });
-    urls.push({ loc: `${base}/en/terms` });
-    urls.push({ loc: `${base}/tr/terms` });
+    urls.push({ loc: `${base}/he`, lastmod: today });
+    urls.push({ loc: `${base}/en`, lastmod: today });
+    urls.push({ loc: `${base}/tr`, lastmod: today });
+    urls.push({ loc: `${base}/ar`, lastmod: today });
+    urls.push({ loc: `${base}/he/terms`, lastmod: today });
+    urls.push({ loc: `${base}/en/terms`, lastmod: today });
+    urls.push({ loc: `${base}/tr/terms`, lastmod: today });
+    urls.push({ loc: `${base}/ar/terms`, lastmod: today });
 
     // TODO: Re-enable when blog is implemented
     // const repo = new BlogRepository();
@@ -39,7 +41,7 @@ export async function GET(req: NextRequest) {
     const locales = ['he', 'en', 'tr', 'ar'];
     const localeGroups: { path: string; locales: string[] }[] = [
       { path: '', locales }, // home pages: /he, /en, /tr, /ar
-      { path: '/terms', locales: ['he', 'en', 'tr'] }, // terms pages
+      { path: '/terms', locales }, // terms pages
     ];
 
     const hreflangMap = new Map<string, { locale: string; href: string }[]>();
@@ -48,10 +50,10 @@ export async function GET(req: NextRequest) {
         locale: loc,
         href: `${base}/${loc}${group.path}`,
       }));
-      // Add x-default pointing to the root or default locale
+      // Add x-default pointing to the default locale variant
       alternates.push({
         locale: 'x-default',
-        href: group.path ? `${base}/he${group.path}` : `${base}/`,
+        href: `${base}/he${group.path}`,
       });
       for (const loc of group.locales) {
         hreflangMap.set(`${base}/${loc}${group.path}`, alternates);
