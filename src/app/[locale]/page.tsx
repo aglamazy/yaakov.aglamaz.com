@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import PublicPage from './components/PublicPage/PublicPage';
 import { fetchStaffProfile, fetchSiteInfo } from '@/firebase/admin';
 
-export const dynamic = 'force-static';
+export const dynamic = 'force-dynamic';
 
 export async function generateMetadata(): Promise<Metadata> {
   const [staff, siteInfo] = await Promise.all([

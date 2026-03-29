@@ -16,6 +16,7 @@ export async function generateMetadata({
   for (const loc of SUPPORTED_LOCALES) {
     languages[loc] = `${BASE_URL}/${loc}/terms`;
   }
+  languages['x-default'] = `${BASE_URL}/he/terms`;
 
   return {
     title: 'Terms and Conditions',

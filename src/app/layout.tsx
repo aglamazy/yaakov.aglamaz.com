@@ -5,7 +5,7 @@ import { fetchSiteInfo } from '../firebase/admin';
 import { headers } from 'next/headers';
 import type { Metadata } from 'next';
 
-const GOOGLE_VERIFICATION = process.env.GOOGLE_SITE_VERIFICATION || '';
+const GOOGLE_VERIFICATION = process.env.GOOGLE_SITE_VERIFICATION || process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION || '';
 const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://yaakov.aglamaz.com';
 
 export async function generateMetadata(): Promise<Metadata> {

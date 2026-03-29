@@ -20,6 +20,7 @@ export async function GET(req: NextRequest) {
     urls.push({ loc: `${base}/ar` });
     urls.push({ loc: `${base}/he/terms` });
     urls.push({ loc: `${base}/en/terms` });
+    urls.push({ loc: `${base}/tr/terms` });
 
     // TODO: Re-enable when blog is implemented
     // const repo = new BlogRepository();
@@ -38,7 +39,7 @@ export async function GET(req: NextRequest) {
     const locales = ['he', 'en', 'tr', 'ar'];
     const localeGroups: { path: string; locales: string[] }[] = [
       { path: '', locales }, // home pages: /he, /en, /tr, /ar
-      { path: '/terms', locales: ['he', 'en'] }, // terms pages
+      { path: '/terms', locales: ['he', 'en', 'tr'] }, // terms pages
     ];
 
     const hreflangMap = new Map<string, { locale: string; href: string }[]>();
