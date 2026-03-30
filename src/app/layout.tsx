@@ -55,9 +55,24 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const rtlLocales = ['he', 'ar'];
   const dir = rtlLocales.includes(locale) ? 'rtl' : 'ltr';
 
+  const siteInfo = await fetchSiteInfo().catch(() => null);
+  const siteName = (siteInfo as any)?.name || 'Portfolio';
+
+  const websiteJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: siteName,
+    url: BASE_URL,
+    inLanguage: ['he', 'en', 'tr', 'ar'],
+  };
+
   return (
     <html dir={dir} lang={locale}>
       <body>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
+        />
         {children}
       </body>
     </html>

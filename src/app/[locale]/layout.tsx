@@ -41,10 +41,17 @@ export async function generateMetadata({
   for (const loc of SUPPORTED_LOCALES) {
     languages[loc] = `${BASE_URL}/${loc}`;
   }
-  languages['x-default'] = `${BASE_URL}/`;
+  languages['x-default'] = `${BASE_URL}/he`;
 
   return {
     description,
+    robots: {
+      index: true,
+      follow: true,
+      'max-snippet': -1,
+      'max-image-preview': 'large' as const,
+      'max-video-preview': -1,
+    },
     alternates: {
       canonical: `/${resolvedLocale}`,
       languages,

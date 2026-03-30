@@ -12,17 +12,19 @@ export async function GET(req: NextRequest) {
     const url = new URL(req.url);
     const base = (process.env.NEXT_PUBLIC_APP_URL || `${url.origin}`)?.replace(/\/+$/, '');
 
-    const today = new Date().toISOString().split('T')[0];
+    // Use a stable lastmod date — updating this on every request causes Google
+    // to distrust lastmod values when the content hasn't actually changed.
+    const CONTENT_LAST_MODIFIED = '2026-03-30';
 
-    const urls: { loc: string; lastmod?: string }[] = [];
-    urls.push({ loc: `${base}/he`, lastmod: today });
-    urls.push({ loc: `${base}/en`, lastmod: today });
-    urls.push({ loc: `${base}/tr`, lastmod: today });
-    urls.push({ loc: `${base}/ar`, lastmod: today });
-    urls.push({ loc: `${base}/he/terms`, lastmod: today });
-    urls.push({ loc: `${base}/en/terms`, lastmod: today });
-    urls.push({ loc: `${base}/tr/terms`, lastmod: today });
-    urls.push({ loc: `${base}/ar/terms`, lastmod: today });
+    const urls: { loc: string; lastmod?: string; changefreq?: string; priority?: number }[] = [];
+    urls.push({ loc: `${base}/he`, lastmod: CONTENT_LAST_MODIFIED, changefreq: 'weekly', priority: 1.0 });
+    urls.push({ loc: `${base}/en`, lastmod: CONTENT_LAST_MODIFIED, changefreq: 'weekly', priority: 0.9 });
+    urls.push({ loc: `${base}/tr`, lastmod: CONTENT_LAST_MODIFIED, changefreq: 'weekly', priority: 0.9 });
+    urls.push({ loc: `${base}/ar`, lastmod: CONTENT_LAST_MODIFIED, changefreq: 'weekly', priority: 0.9 });
+    urls.push({ loc: `${base}/he/terms`, lastmod: CONTENT_LAST_MODIFIED, changefreq: 'monthly', priority: 0.5 });
+    urls.push({ loc: `${base}/en/terms`, lastmod: CONTENT_LAST_MODIFIED, changefreq: 'monthly', priority: 0.5 });
+    urls.push({ loc: `${base}/tr/terms`, lastmod: CONTENT_LAST_MODIFIED, changefreq: 'monthly', priority: 0.5 });
+    urls.push({ loc: `${base}/ar/terms`, lastmod: CONTENT_LAST_MODIFIED, changefreq: 'monthly', priority: 0.5 });
 
     // TODO: Re-enable when blog is implemented
     // const repo = new BlogRepository();
@@ -66,6 +68,8 @@ export async function GET(req: NextRequest) {
       ...urls.map(u => {
         const lines = [`  <url>`, `    <loc>${xmlEscape(u.loc)}</loc>`];
         if (u.lastmod) lines.push(`    <lastmod>${u.lastmod}</lastmod>`);
+        if (u.changefreq) lines.push(`    <changefreq>${u.changefreq}</changefreq>`);
+        if (u.priority != null) lines.push(`    <priority>${u.priority.toFixed(1)}</priority>`);
         const alternates = hreflangMap.get(u.loc);
         if (alternates) {
           for (const alt of alternates) {

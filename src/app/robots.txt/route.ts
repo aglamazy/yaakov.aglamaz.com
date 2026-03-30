@@ -8,6 +8,12 @@ export async function GET(req: NextRequest) {
   const body = [
     'User-agent: *',
     'Allow: /',
+    'Disallow: /admin',
+    'Disallow: /api/',
+    'Disallow: /login',
+    'Disallow: /auth-gate',
+    'Disallow: /welcome/',
+    '',
     `Sitemap: ${base}/sitemap.xml`,
     ''
   ].join('\n');
