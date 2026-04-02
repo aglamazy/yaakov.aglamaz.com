@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import PublicPage from './components/PublicPage/PublicPage';
 import { fetchStaffProfile, fetchSiteInfo } from '@/firebase/admin';
-import { SUPPORTED_LOCALES, DEFAULT_LOCALE } from '@/i18n';
+import { SUPPORTED_LOCALES, DEFAULT_LOCALE, DEFAULT_RESOURCES } from '@/i18n';
 
 export const dynamic = 'force-dynamic';
 
@@ -27,6 +27,20 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
+function getTranslation(locale: string, key: string): unknown {
+  const resource = (DEFAULT_RESOURCES[locale]?.common ?? DEFAULT_RESOURCES['en']?.common ?? {}) as Record<string, unknown>;
+  const parts = key.split('.');
+  let current: unknown = resource;
+  for (const part of parts) {
+    if (current && typeof current === 'object' && part in current) {
+      current = (current as Record<string, unknown>)[part];
+    } else {
+      return key;
+    }
+  }
+  return current;
+}
+
 export default async function PublicLandingPage({
   params,
 }: {
@@ -38,6 +52,26 @@ export default async function PublicLandingPage({
 
   const heroTitle = staff?.name ?? 'name';
   const heroSubtitle = staff?.position ?? 'position';
+
+  // Pre-resolve translations server-side so content is in initial HTML for crawlers
+  const t = (key: string) => {
+    const val = getTranslation(resolvedLocale, key);
+    return typeof val === 'string' ? val : key;
+  };
+  const serverTranslations = {
+    aboutTitle: t('publicPortfolio.aboutTitle'),
+    aboutBody: t('publicPortfolio.aboutBody'),
+    skillsTitle: t('publicPortfolio.skillsTitle'),
+    skillsBody: t('publicPortfolio.skillsBody'),
+    projectsTitle: t('publicPortfolio.projectsTitle'),
+    projectsBody: t('publicPortfolio.projectsBody'),
+    contactTitle: t('publicPortfolio.contactTitle'),
+    contactBody: t('publicPortfolio.contactBody'),
+    heroCta: t('publicPortfolio.heroCta'),
+    contactCta: t('publicPortfolio.contactCta'),
+    skillsList: getTranslation(resolvedLocale, 'publicPortfolio.skillsList') as string[],
+    projectsList: getTranslation(resolvedLocale, 'publicPortfolio.projectsList') as Array<{ title: string; summary: string }>,
+  };
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -60,7 +94,7 @@ export default async function PublicLandingPage({
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <PublicPage heroTitle={heroTitle} heroSubtitle={heroSubtitle} />
+      <PublicPage heroTitle={heroTitle} heroSubtitle={heroSubtitle} serverTranslations={serverTranslations} />
     </>
   );
 }

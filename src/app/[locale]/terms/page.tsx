@@ -1,6 +1,7 @@
 import TermsEn from '@/components/legal/TermsContent.en';
 import TermsHe from '@/components/legal/TermsContent.he';
 import TermsTr from '@/components/legal/TermsContent.tr';
+import TermsAr from '@/components/legal/TermsContent.ar';
 import { DEFAULT_LOCALE, SUPPORTED_LOCALES } from '@/i18n';
 
 interface TermsPageProps {
@@ -16,6 +17,8 @@ export default async function TermsPage({ params }: TermsPageProps) {
       return <TermsHe />;
     case 'tr':
       return <TermsTr />;
+    case 'ar':
+      return <TermsAr />;
     case 'en':
     default:
       return <TermsEn />;

@@ -103,12 +103,28 @@ const BACKGROUND_BLOB_BASES = [
 
 const clamp = (value: number, min: number, max: number) => Math.min(Math.max(value, min), max);
 
+export interface ServerTranslations {
+  aboutTitle: string;
+  aboutBody: string;
+  skillsTitle: string;
+  skillsBody: string;
+  projectsTitle: string;
+  projectsBody: string;
+  contactTitle: string;
+  contactBody: string;
+  heroCta: string;
+  contactCta: string;
+  skillsList: string[];
+  projectsList: Array<{ title: string; summary: string }>;
+}
+
 interface PublicPageProps {
   heroTitle?: string;
   heroSubtitle?: string;
+  serverTranslations?: ServerTranslations;
 }
 
-export default function PublicPage({ heroTitle, heroSubtitle }: PublicPageProps) {
+export default function PublicPage({ heroTitle, heroSubtitle, serverTranslations }: PublicPageProps) {
   const { t, i18n } = useTranslation();
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const sectionRefs = useRef<(HTMLElement | null)[]>([]);
@@ -126,10 +142,21 @@ export default function PublicPage({ heroTitle, heroSubtitle }: PublicPageProps)
   const skillsListRaw = t('publicPortfolio.skillsList', { returnObjects: true }) as unknown;
   const projectsListRaw = t('publicPortfolio.projectsList', { returnObjects: true }) as unknown;
 
-  const skillsList = Array.isArray(skillsListRaw) ? (skillsListRaw as string[]) : [];
+  const skillsList = Array.isArray(skillsListRaw) ? (skillsListRaw as string[])
+    : Array.isArray(serverTranslations?.skillsList) ? serverTranslations.skillsList : [];
   const projectsList = Array.isArray(projectsListRaw)
     ? (projectsListRaw as Array<{ title: string; summary: string }>)
-    : [];
+    : Array.isArray(serverTranslations?.projectsList) ? serverTranslations.projectsList : [];
+
+  // Helper that uses client i18n but falls back to server translations for SSR
+  const st = (key: string): string => {
+    const clientVal = t(key);
+    if (clientVal !== key) return clientVal;
+    if (!serverTranslations) return clientVal;
+    const shortKey = key.replace('publicPortfolio.', '') as keyof ServerTranslations;
+    const fallback = serverTranslations[shortKey];
+    return typeof fallback === 'string' ? fallback : clientVal;
+  };
   const languageLabelsRaw = t('publicPortfolio.language', { returnObjects: true }) as Record<string, string> | string;
   const languageLabels = useMemo(() => {
     if (languageLabelsRaw && typeof languageLabelsRaw === 'object') {
@@ -605,9 +632,9 @@ export default function PublicPage({ heroTitle, heroSubtitle }: PublicPageProps)
       <div ref={scrollRef} className={styles.container}>
         {SECTION_CONFIG.map((section, index) => {
           const isHero = section.id === 'hero';
-          const title = isHero && heroTitle ? heroTitle : t(section.titleKey);
-          const body = isHero && heroSubtitle ? heroSubtitle : t(section.bodyKey);
-          const cta = section.ctaKey ? t(section.ctaKey) : null;
+          const title = isHero && heroTitle ? heroTitle : st(section.titleKey);
+          const body = isHero && heroSubtitle ? heroSubtitle : st(section.bodyKey);
+          const cta = section.ctaKey ? st(section.ctaKey) : null;
           const sectionClass = `${styles.section} ${styles[section.id] ?? ''}`;
 
           return (

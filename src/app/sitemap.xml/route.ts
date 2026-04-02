@@ -14,7 +14,7 @@ export async function GET(req: NextRequest) {
 
     // Use a stable lastmod date — updating this on every request causes Google
     // to distrust lastmod values when the content hasn't actually changed.
-    const CONTENT_LAST_MODIFIED = '2026-03-30';
+    const CONTENT_LAST_MODIFIED = '2026-04-02';
 
     const urls: { loc: string; lastmod?: string; changefreq?: string; priority?: number }[] = [];
     urls.push({ loc: `${base}/he`, lastmod: CONTENT_LAST_MODIFIED, changefreq: 'weekly', priority: 1.0 });
