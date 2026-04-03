@@ -68,6 +68,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 
   return (
     <html dir={dir} lang={locale}>
+      <head>
+        <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
+      </head>
       <body>
         <script
           type="application/ld+json"

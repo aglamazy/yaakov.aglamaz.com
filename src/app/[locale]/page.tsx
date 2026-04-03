@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Link from 'next/link';
 import PublicPage from './components/PublicPage/PublicPage';
 import { fetchStaffProfile, fetchSiteInfo } from '@/firebase/admin';
 import { SUPPORTED_LOCALES, DEFAULT_LOCALE, DEFAULT_RESOURCES } from '@/i18n';
@@ -95,6 +96,18 @@ export default async function PublicLandingPage({
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       <PublicPage heroTitle={heroTitle} heroSubtitle={heroSubtitle} serverTranslations={serverTranslations} />
+      <footer style={{ padding: '1rem', textAlign: 'center', fontSize: '0.875rem', color: '#6b7280' }}>
+        <Link href={`/${resolvedLocale}/terms`} style={{ textDecoration: 'underline' }}>
+          {getTranslation(resolvedLocale, 'termsAndConditions') as string || 'Terms & Conditions'}
+        </Link>
+        {' · '}
+        {SUPPORTED_LOCALES.filter(l => l !== resolvedLocale).map((loc, i) => (
+          <span key={loc}>
+            {i > 0 && ' · '}
+            <Link href={`/${loc}`}>{loc.toUpperCase()}</Link>
+          </span>
+        ))}
+      </footer>
     </>
   );
 }
