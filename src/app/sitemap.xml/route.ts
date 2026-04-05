@@ -14,9 +14,11 @@ export async function GET(req: NextRequest) {
 
     // Use a stable lastmod date — updating this on every request causes Google
     // to distrust lastmod values when the content hasn't actually changed.
-    const CONTENT_LAST_MODIFIED = '2026-04-03';
+    const CONTENT_LAST_MODIFIED = '2026-04-05';
 
     const urls: { loc: string; lastmod?: string; changefreq?: string; priority?: number }[] = [];
+    // Root URL — permanent-redirects to /he but must be in sitemap so Google discovers it
+    urls.push({ loc: `${base}/`, lastmod: CONTENT_LAST_MODIFIED, changefreq: 'weekly', priority: 1.0 });
     urls.push({ loc: `${base}/he`, lastmod: CONTENT_LAST_MODIFIED, changefreq: 'weekly', priority: 1.0 });
     urls.push({ loc: `${base}/en`, lastmod: CONTENT_LAST_MODIFIED, changefreq: 'weekly', priority: 0.9 });
     urls.push({ loc: `${base}/tr`, lastmod: CONTENT_LAST_MODIFIED, changefreq: 'weekly', priority: 0.9 });

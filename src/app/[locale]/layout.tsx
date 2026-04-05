@@ -34,7 +34,13 @@ export async function generateMetadata({
 
   const siteInfo = await fetchSiteInfo().catch(() => null);
   const siteName = (siteInfo as any)?.name || 'Portfolio';
-  const description = `${siteName} — personal portfolio and professional profile`;
+  const descriptionByLocale: Record<string, string> = {
+    he: `${siteName} — תיק עבודות אישי ופרופיל מקצועי`,
+    en: `${siteName} — personal portfolio and professional profile`,
+    tr: `${siteName} — kişisel portföy ve profesyonel profil`,
+    ar: `${siteName} — ملف شخصي وسيرة مهنية`,
+  };
+  const description = descriptionByLocale[resolvedLocale] || descriptionByLocale.en;
   const pageUrl = `${BASE_URL}/${resolvedLocale}`;
 
   const languages: Record<string, string> = {};

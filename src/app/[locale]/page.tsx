@@ -8,16 +8,41 @@ export const dynamic = 'force-dynamic';
 
 const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://yaakov.aglamaz.com';
 
-export async function generateMetadata(): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const resolvedLocale = SUPPORTED_LOCALES.includes(locale) ? locale : DEFAULT_LOCALE;
   const [staff, siteInfo] = await Promise.all([
     fetchStaffProfile().catch(() => null),
     fetchSiteInfo().catch(() => null),
   ]);
   const name = staff?.name || (siteInfo as any)?.name || 'Portfolio';
   const position = staff?.position || '';
-  const description = position
-    ? `${name} — ${position}. View portfolio, skills, and projects.`
-    : `${name} — personal portfolio. View skills, projects, and get in touch.`;
+
+  const descTemplates: Record<string, { withPos: string; withoutPos: string }> = {
+    he: {
+      withPos: `${name} — ${position}. צפו בתיק עבודות, כישורים ופרויקטים.`,
+      withoutPos: `${name} — תיק עבודות אישי. צפו בכישורים, פרויקטים וצרו קשר.`,
+    },
+    en: {
+      withPos: `${name} — ${position}. View portfolio, skills, and projects.`,
+      withoutPos: `${name} — personal portfolio. View skills, projects, and get in touch.`,
+    },
+    tr: {
+      withPos: `${name} — ${position}. Portföyü, yetenekleri ve projeleri görüntüleyin.`,
+      withoutPos: `${name} — kişisel portföy. Yetenekleri, projeleri görüntüleyin ve iletişime geçin.`,
+    },
+    ar: {
+      withPos: `${name} — ${position}. عرض الملف الشخصي والمهارات والمشاريع.`,
+      withoutPos: `${name} — ملف شخصي. عرض المهارات والمشاريع والتواصل.`,
+    },
+  };
+  const tpl = descTemplates[resolvedLocale] || descTemplates.en;
+  const description = position ? tpl.withPos : tpl.withoutPos;
+
   return {
     title: name,
     description,
