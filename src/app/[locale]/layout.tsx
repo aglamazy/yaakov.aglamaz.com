@@ -70,6 +70,20 @@ export async function generateMetadata({
       alternateLocale: SUPPORTED_LOCALES.filter((l) => l !== resolvedLocale).map(
         (l) => LOCALE_TO_OG[l] || l,
       ),
+      images: [
+        {
+          url: `${BASE_URL}/og-image.svg`,
+          width: 1200,
+          height: 630,
+          alt: siteName,
+        },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: siteName,
+      description,
+      images: [`${BASE_URL}/og-image.svg`],
     },
   };
 }
@@ -98,9 +112,33 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
     // Don't throw - allow page to render without Firebase data
   }
 
+  const siteName = (siteInfo as any)?.name || 'Portfolio';
+  const breadcrumbJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: siteName,
+        item: BASE_URL,
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: locale.toUpperCase(),
+        item: `${BASE_URL}/${locale}`,
+      },
+    ],
+  };
+
   return (
     <I18nProvider initialLocale={locale}>
       <I18nGate>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+        />
         <PublicLayoutShell siteInfo={siteInfo} locale={locale} resolvedLocale={resolvedLocale}>
           {children}
         </PublicLayoutShell>

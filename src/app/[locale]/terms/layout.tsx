@@ -49,19 +49,42 @@ export async function generateMetadata({
       title,
       description,
       url: `${BASE_URL}/${resolvedLocale}/terms`,
+      images: [
+        {
+          url: `${BASE_URL}/og-image.svg`,
+          width: 1200,
+          height: 630,
+          alt: title,
+        },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: [`${BASE_URL}/og-image.svg`],
     },
   };
 }
 
-export default async function TermsLayout({ children }: { children: ReactNode }) {
+export default async function TermsLayout({
+  children,
+  params,
+}: {
+  children: ReactNode;
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  const resolvedLocale = SUPPORTED_LOCALES.includes(locale) ? locale : DEFAULT_LOCALE;
   const siteInfo = await fetchSiteInfo().catch(() => null);
   const siteName = (siteInfo as any)?.name || 'Portfolio';
 
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'WebPage',
-    name: 'Terms and Conditions',
-    description: 'Terms and conditions of use for this website.',
+    name: TERMS_TITLES[resolvedLocale] || TERMS_TITLES.en,
+    description: TERMS_DESCRIPTIONS[resolvedLocale] || TERMS_DESCRIPTIONS.en,
+    inLanguage: resolvedLocale,
     isPartOf: {
       '@type': 'WebSite',
       name: siteName,
@@ -69,11 +92,40 @@ export default async function TermsLayout({ children }: { children: ReactNode })
     },
   };
 
+  const breadcrumbJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: siteName,
+        item: BASE_URL,
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: resolvedLocale.toUpperCase(),
+        item: `${BASE_URL}/${resolvedLocale}`,
+      },
+      {
+        '@type': 'ListItem',
+        position: 3,
+        name: TERMS_TITLES[resolvedLocale] || TERMS_TITLES.en,
+        item: `${BASE_URL}/${resolvedLocale}/terms`,
+      },
+    ],
+  };
+
   return (
     <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
       {children}
     </>

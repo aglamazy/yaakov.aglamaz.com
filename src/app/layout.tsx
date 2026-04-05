@@ -32,6 +32,20 @@ export async function generateMetadata(): Promise<Metadata> {
         title: siteName,
         description,
         url: BASE_URL,
+        images: [
+          {
+            url: `${BASE_URL}/og-image.svg`,
+            width: 1200,
+            height: 630,
+            alt: siteName,
+          },
+        ],
+      },
+      twitter: {
+        card: 'summary_large_image',
+        title: siteName,
+        description,
+        images: [`${BASE_URL}/og-image.svg`],
       },
       alternates: {
         canonical: '/he',
@@ -66,6 +80,15 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     inLanguage: ['he', 'en', 'tr', 'ar'],
   };
 
+  const organizationJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    name: siteName,
+    url: BASE_URL,
+    logo: `${BASE_URL}/favicon.svg`,
+    sameAs: [],
+  };
+
   return (
     <html dir={dir} lang={locale}>
       <head>
@@ -75,6 +98,10 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
         />
         {children}
       </body>
