@@ -5,18 +5,18 @@ import { fetchSiteInfo } from '@/firebase/admin';
 
 const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://yaakov.aglamaz.com';
 
-const TERMS_TITLES: Record<string, string> = {
-  he: 'תנאי שימוש',
-  en: 'Terms and Conditions',
-  tr: 'Kullanım Koşulları',
-  ar: 'الشروط والأحكام',
+const CONTACT_TITLES: Record<string, string> = {
+  he: 'צור קשר',
+  en: 'Contact',
+  tr: 'İletişim',
+  ar: 'اتصل بنا',
 };
 
-const TERMS_DESCRIPTIONS: Record<string, string> = {
-  he: 'תנאי שימוש באתר — קרא את התנאים וההגבלות לשימוש באתר זה.',
-  en: 'Terms and conditions of use — read the terms and conditions for using this website.',
-  tr: 'Kullanım koşulları — bu web sitesini kullanım şartlarını ve koşullarını okuyun.',
-  ar: 'شروط وأحكام الاستخدام — اقرأ الشروط والأحكام لاستخدام هذا الموقع.',
+const CONTACT_DESCRIPTIONS: Record<string, string> = {
+  he: 'צור קשר — שלח הודעה או מצא את פרטי ההתקשרות שלנו.',
+  en: 'Contact — send a message or find our contact details.',
+  tr: 'İletişim — mesaj gönderin veya iletişim bilgilerimizi bulun.',
+  ar: 'اتصل بنا — أرسل رسالة أو ابحث عن تفاصيل الاتصال الخاصة بنا.',
 };
 
 export async function generateMetadata({
@@ -26,13 +26,13 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale } = await params;
   const resolvedLocale = SUPPORTED_LOCALES.includes(locale) ? locale : DEFAULT_LOCALE;
-  const title = TERMS_TITLES[resolvedLocale] || TERMS_TITLES.en;
-  const description = TERMS_DESCRIPTIONS[resolvedLocale] || TERMS_DESCRIPTIONS.en;
+  const title = CONTACT_TITLES[resolvedLocale] || CONTACT_TITLES.en;
+  const description = CONTACT_DESCRIPTIONS[resolvedLocale] || CONTACT_DESCRIPTIONS.en;
   const languages: Record<string, string> = {};
   for (const loc of SUPPORTED_LOCALES) {
-    languages[loc] = `${BASE_URL}/${loc}/terms`;
+    languages[loc] = `${BASE_URL}/${loc}/contact`;
   }
-  languages['x-default'] = `${BASE_URL}/he/terms`;
+  languages['x-default'] = `${BASE_URL}/he/contact`;
 
   return {
     title,
@@ -42,13 +42,13 @@ export async function generateMetadata({
       follow: true,
     },
     alternates: {
-      canonical: `/${resolvedLocale}/terms`,
+      canonical: `/${resolvedLocale}/contact`,
       languages,
     },
     openGraph: {
       title,
       description,
-      url: `${BASE_URL}/${resolvedLocale}/terms`,
+      url: `${BASE_URL}/${resolvedLocale}/contact`,
       images: [
         {
           url: `${BASE_URL}/og-image.png`,
@@ -67,7 +67,7 @@ export async function generateMetadata({
   };
 }
 
-export default async function TermsLayout({
+export default async function ContactLayout({
   children,
   params,
 }: {
@@ -78,19 +78,6 @@ export default async function TermsLayout({
   const resolvedLocale = SUPPORTED_LOCALES.includes(locale) ? locale : DEFAULT_LOCALE;
   const siteInfo = await fetchSiteInfo().catch(() => null);
   const siteName = (siteInfo as any)?.name || 'Portfolio';
-
-  const jsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'WebPage',
-    name: TERMS_TITLES[resolvedLocale] || TERMS_TITLES.en,
-    description: TERMS_DESCRIPTIONS[resolvedLocale] || TERMS_DESCRIPTIONS.en,
-    inLanguage: resolvedLocale,
-    isPartOf: {
-      '@type': 'WebSite',
-      name: siteName,
-      url: BASE_URL,
-    },
-  };
 
   const breadcrumbJsonLd = {
     '@context': 'https://schema.org',
@@ -111,18 +98,14 @@ export default async function TermsLayout({
       {
         '@type': 'ListItem',
         position: 3,
-        name: TERMS_TITLES[resolvedLocale] || TERMS_TITLES.en,
-        item: `${BASE_URL}/${resolvedLocale}/terms`,
+        name: CONTACT_TITLES[resolvedLocale] || CONTACT_TITLES.en,
+        item: `${BASE_URL}/${resolvedLocale}/contact`,
       },
     ],
   };
 
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}

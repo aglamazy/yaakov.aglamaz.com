@@ -34,7 +34,7 @@ export async function generateMetadata(): Promise<Metadata> {
         url: BASE_URL,
         images: [
           {
-            url: `${BASE_URL}/og-image.svg`,
+            url: `${BASE_URL}/og-image.png`,
             width: 1200,
             height: 630,
             alt: siteName,
@@ -45,7 +45,7 @@ export async function generateMetadata(): Promise<Metadata> {
         card: 'summary_large_image',
         title: siteName,
         description,
-        images: [`${BASE_URL}/og-image.svg`],
+        images: [`${BASE_URL}/og-image.png`],
       },
       alternates: {
         canonical: '/he',
