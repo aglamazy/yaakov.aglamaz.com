@@ -32,8 +32,13 @@ if (!entry) {
   process.exit(0);
 }
 
-// Collect all files referenced by the middleware
-const files = (entry.files || []).map(f => path.join('..', '.next', f));
+// Collect all files referenced by the middleware.
+// Manifest paths are relative to .next/ (e.g. "server/edge/chunks/foo.js").
+// nft.json paths must be relative to the nft.json location (.next/server/).
+const files = (entry.files || []).map(f => {
+  const rel = path.relative('server', f);
+  return rel;
+});
 
 // Write a stub middleware.js so the nft.json has something to reference
 if (!fs.existsSync(stubPath)) {
