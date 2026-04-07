@@ -74,7 +74,7 @@ export default async function PublicLandingPage({
 }) {
   const { locale } = await params;
   const resolvedLocale = SUPPORTED_LOCALES.includes(locale) ? locale : DEFAULT_LOCALE;
-  const staff = await fetchStaffProfile();
+  const staff = await fetchStaffProfile().catch(() => null);
 
   const heroTitle = staff?.name ?? 'name';
   const heroSubtitle = staff?.position ?? 'position';

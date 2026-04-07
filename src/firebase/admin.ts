@@ -97,7 +97,7 @@ async function ensureSiteNameTranslations(siteId: string, siteName?: string | nu
 }
 
 export async function fetchSiteInfo() {
-  initAdmin();
+  if (!initAdmin()) return null;
   const db = getFirestore();
   if (!process.env.NEXT_SITE_ID) {
     throw new Error('NEXT_SITE_ID is not set');
@@ -140,7 +140,7 @@ function coerceFieldString(data: Record<string, unknown>, key: string) {
 }
 
 export async function fetchStaffProfile() {
-  initAdmin();
+  if (!initAdmin()) return null;
   const db = getFirestore();
   const snapshot = await db.collection('staff').limit(1).get();
 

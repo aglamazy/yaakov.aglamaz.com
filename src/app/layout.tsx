@@ -53,7 +53,14 @@ export async function generateMetadata(): Promise<Metadata> {
     };
   } catch (error) {
     console.error('Failed to generate metadata:', error);
-    throw error;
+    return {
+      metadataBase: new URL(BASE_URL),
+      title: 'Portfolio',
+      description: 'Personal portfolio and professional profile',
+      icons: { icon: '/favicon.svg' },
+      verification: { google: GOOGLE_VERIFICATION },
+      alternates: { canonical: '/he' },
+    };
   }
 }
 
