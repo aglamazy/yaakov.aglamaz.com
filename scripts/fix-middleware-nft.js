@@ -20,10 +20,21 @@ const manifestPath = path.join(serverDir, 'middleware-manifest.json');
 // "middlewareHandler is not a function" error in the serverless context.
 fs.writeFileSync(
   stubPath,
-  `// Vercel serverless compatibility stub.
-// The real middleware runs as an edge function (see middleware-manifest.json).
-// This stub prevents "middlewareHandler is not a function" in ___next_launcher.cjs.
-module.exports = { default: function middleware() { return undefined; } };
+  `// Vercel Node.js middleware compatibility stub.
+// The real middleware runs as an edge function via the Turbopack edge chunks
+// in middleware-manifest.json. This stub satisfies Vercel's middleware-launcher.cjs
+// which calls: middlewareHandler({ request }) and expects { response } back.
+// Returning x-middleware-next:1 signals "pass through to the page handler".
+module.exports = {
+  default: async function middleware() {
+    return {
+      response: new Response(null, {
+        status: 200,
+        headers: { 'x-middleware-next': '1' }
+      })
+    };
+  }
+};
 `
 );
 console.log('Wrote middleware.js passthrough stub.');
