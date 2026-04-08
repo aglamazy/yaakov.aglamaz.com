@@ -103,7 +103,13 @@ export async function fetchSiteInfo() {
     throw new Error('NEXT_SITE_ID is not set');
   }
   const siteId = process.env.NEXT_SITE_ID;
-  const doc = await db.collection('sites').doc(siteId).get();
+  let doc;
+  try {
+    doc = await db.collection('sites').doc(siteId).get();
+  } catch (error) {
+    console.error('[Firebase Admin] Firestore get() failed:', error);
+    return null;
+  }
   if (!doc.exists) return null;
 
   const data = doc.data() || {};
@@ -142,7 +148,13 @@ function coerceFieldString(data: Record<string, unknown>, key: string) {
 export async function fetchStaffProfile() {
   if (!initAdmin()) return null;
   const db = getFirestore();
-  const snapshot = await db.collection('staff').limit(1).get();
+  let snapshot;
+  try {
+    snapshot = await db.collection('staff').limit(1).get();
+  } catch (error) {
+    console.error('[Firebase Admin] Firestore staff query failed:', error);
+    return null;
+  }
 
   if (snapshot.empty) {
     return null;
