@@ -60,6 +60,26 @@ export async function generateMetadata(): Promise<Metadata> {
       icons: { icon: '/favicon.svg' },
       verification: { google: GOOGLE_VERIFICATION },
       alternates: { canonical: '/he' },
+      openGraph: {
+        type: 'website',
+        title: 'Portfolio',
+        description: 'Personal portfolio and professional profile',
+        url: BASE_URL,
+        images: [
+          {
+            url: `${BASE_URL}/og-image.png`,
+            width: 1200,
+            height: 630,
+            alt: 'Portfolio',
+          },
+        ],
+      },
+      twitter: {
+        card: 'summary_large_image',
+        title: 'Portfolio',
+        description: 'Personal portfolio and professional profile',
+        images: [`${BASE_URL}/og-image.png`],
+      },
     };
   }
 }
