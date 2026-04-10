@@ -4,8 +4,9 @@ export const dynamic = 'force-dynamic';
 
 export async function GET(req: NextRequest) {
   const url = new URL(req.url);
-  const base = (process.env.NEXT_PUBLIC_APP_URL || `${url.origin}`)?.replace(/\/+$/, '');
-  const body = [
+  const canonicalBase = (process.env.NEXT_PUBLIC_APP_URL || `${url.origin}`)?.replace(/\/+$/, '');
+  const requestBase = url.origin.replace(/\/+$/, '');
+  const lines = [
     'User-agent: *',
     'Allow: /',
     'Disallow: /admin',
@@ -14,9 +15,15 @@ export async function GET(req: NextRequest) {
     'Disallow: /auth-gate',
     'Disallow: /welcome/',
     '',
-    `Sitemap: ${base}/sitemap.xml`,
-    ''
-  ].join('\n');
+    `Sitemap: ${canonicalBase}/sitemap.xml`,
+  ];
+  // If the request comes from a secondary domain (e.g. bubble-labs.com),
+  // also reference its own sitemap so Google discovers it for that domain.
+  if (requestBase !== canonicalBase) {
+    lines.push(`Sitemap: ${requestBase}/sitemap.xml`);
+  }
+  lines.push('');
+  const body = lines.join('\n');
   return new Response(body, {
     headers: {
       'Content-Type': 'text/plain; charset=utf-8',
