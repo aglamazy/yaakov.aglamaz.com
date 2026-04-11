@@ -27,10 +27,8 @@ export async function GET(req: NextRequest) {
     urls.push({ loc: `${base}/en/terms`, lastmod: CONTENT_LAST_MODIFIED, changefreq: 'monthly', priority: 0.5 });
     urls.push({ loc: `${base}/tr/terms`, lastmod: CONTENT_LAST_MODIFIED, changefreq: 'monthly', priority: 0.5 });
     urls.push({ loc: `${base}/ar/terms`, lastmod: CONTENT_LAST_MODIFIED, changefreq: 'monthly', priority: 0.5 });
-    urls.push({ loc: `${base}/he/contact`, lastmod: CONTENT_LAST_MODIFIED, changefreq: 'monthly', priority: 0.7 });
-    urls.push({ loc: `${base}/en/contact`, lastmod: CONTENT_LAST_MODIFIED, changefreq: 'monthly', priority: 0.7 });
-    urls.push({ loc: `${base}/tr/contact`, lastmod: CONTENT_LAST_MODIFIED, changefreq: 'monthly', priority: 0.7 });
-    urls.push({ loc: `${base}/ar/contact`, lastmod: CONTENT_LAST_MODIFIED, changefreq: 'monthly', priority: 0.7 });
+    // Contact pages are 308 redirects to /{locale}#contact (home page section),
+    // so they must NOT appear in the sitemap — Google won't index redirect URLs.
 
     // TODO: Re-enable when blog is implemented
     // const repo = new BlogRepository();
@@ -50,7 +48,7 @@ export async function GET(req: NextRequest) {
     const localeGroups: { path: string; locales: string[] }[] = [
       { path: '', locales }, // home pages: /he, /en, /tr, /ar
       { path: '/terms', locales }, // terms pages
-      { path: '/contact', locales }, // contact pages
+      // Contact pages are 308 redirects — excluded from hreflang groups
     ];
 
     const hreflangMap = new Map<string, { locale: string; href: string }[]>();
