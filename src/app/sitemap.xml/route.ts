@@ -14,7 +14,7 @@ export async function GET(req: NextRequest) {
 
     // Use a stable lastmod date — updating this on every request causes Google
     // to distrust lastmod values when the content hasn't actually changed.
-    const CONTENT_LAST_MODIFIED = '2026-04-10';
+    const CONTENT_LAST_MODIFIED = '2026-04-12';
 
     const urls: { loc: string; lastmod?: string; changefreq?: string; priority?: number }[] = [];
     // Root URL — permanent-redirects to /he but must be in sitemap so Google discovers it
@@ -27,8 +27,12 @@ export async function GET(req: NextRequest) {
     urls.push({ loc: `${base}/en/terms`, lastmod: CONTENT_LAST_MODIFIED, changefreq: 'monthly', priority: 0.5 });
     urls.push({ loc: `${base}/tr/terms`, lastmod: CONTENT_LAST_MODIFIED, changefreq: 'monthly', priority: 0.5 });
     urls.push({ loc: `${base}/ar/terms`, lastmod: CONTENT_LAST_MODIFIED, changefreq: 'monthly', priority: 0.5 });
-    // Contact pages are 308 redirects to /{locale}#contact (home page section),
-    // so they must NOT appear in the sitemap — Google won't index redirect URLs.
+    // Contact pages (308 redirect to /{locale}#contact) — included so Google
+    // discovers them and follows the redirect to the canonical home-page section.
+    urls.push({ loc: `${base}/he/contact`, lastmod: CONTENT_LAST_MODIFIED, changefreq: 'monthly', priority: 0.4 });
+    urls.push({ loc: `${base}/en/contact`, lastmod: CONTENT_LAST_MODIFIED, changefreq: 'monthly', priority: 0.4 });
+    urls.push({ loc: `${base}/tr/contact`, lastmod: CONTENT_LAST_MODIFIED, changefreq: 'monthly', priority: 0.4 });
+    urls.push({ loc: `${base}/ar/contact`, lastmod: CONTENT_LAST_MODIFIED, changefreq: 'monthly', priority: 0.4 });
 
     // TODO: Re-enable when blog is implemented
     // const repo = new BlogRepository();
@@ -48,7 +52,7 @@ export async function GET(req: NextRequest) {
     const localeGroups: { path: string; locales: string[] }[] = [
       { path: '', locales }, // home pages: /he, /en, /tr, /ar
       { path: '/terms', locales }, // terms pages
-      // Contact pages are 308 redirects — excluded from hreflang groups
+      { path: '/contact', locales }, // contact pages (308 → home #contact)
     ];
 
     const hreflangMap = new Map<string, { locale: string; href: string }[]>();
