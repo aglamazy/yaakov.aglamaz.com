@@ -6,10 +6,10 @@ import I18nGate from '@/components/I18nGate';
 import { fetchSiteInfo } from '@/firebase/admin';
 import { DEFAULT_LOCALE, SUPPORTED_LOCALES } from '@/i18n';
 import { assertSerializableDev } from '@/utils/assertSerializableDev';
-import { headers } from 'next/headers';
-import { findBestMatchingTag, parseAcceptLanguage } from '@/utils/locale';
 
-export const dynamic = 'force-dynamic';
+// Allow ISR: pre-render at build time, revalidate every hour for fresh Firebase data.
+// force-dynamic was preventing pre-rendering, which made pages invisible to Google.
+export const revalidate = 3600;
 
 const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://yaakov.aglamaz.com';
 
@@ -96,10 +96,9 @@ interface LocaleLayoutProps {
 export default async function LocaleLayout({ children, params }: LocaleLayoutProps) {
   const { locale: paramsLocale } = await params;
   const locale = SUPPORTED_LOCALES.includes(paramsLocale) ? paramsLocale : DEFAULT_LOCALE;
-  const headerStore = await headers();
-  const acceptLanguage = headerStore.get('accept-language');
-  const preferences = parseAcceptLanguage(acceptLanguage);
-  const resolvedLocale = findBestMatchingTag(preferences, locale) ?? locale;
+  // Use URL locale directly — accept-language negotiation via headers() forced
+  // dynamic rendering which prevented pre-rendering and hurt Google indexing.
+  const resolvedLocale = locale;
 
   let siteInfo = null;
   try {

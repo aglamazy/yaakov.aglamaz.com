@@ -4,7 +4,9 @@ import PublicPage from './components/PublicPage/PublicPage';
 import { fetchStaffProfile, fetchSiteInfo } from '@/firebase/admin';
 import { SUPPORTED_LOCALES, DEFAULT_LOCALE, DEFAULT_RESOURCES } from '@/i18n';
 
-export const dynamic = 'force-dynamic';
+// Allow ISR: pre-render at build time, revalidate every hour for fresh Firebase data.
+// force-dynamic was preventing pre-rendering, which made pages invisible to Google.
+export const revalidate = 3600;
 
 const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://yaakov.aglamaz.com';
 

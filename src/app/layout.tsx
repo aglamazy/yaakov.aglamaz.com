@@ -2,7 +2,6 @@ import './globals.css';
 import I18nProvider from '../components/I18nProvider';
 import I18nGate from '../components/I18nGate';
 import { fetchSiteInfo } from '../firebase/admin';
-import { headers } from 'next/headers';
 import type { Metadata } from 'next';
 
 const GOOGLE_VERIFICATION = process.env.GOOGLE_SITE_VERIFICATION || process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION || '';
@@ -84,17 +83,13 @@ export async function generateMetadata(): Promise<Metadata> {
   }
 }
 
+// Revalidate every hour for fresh Firebase data (ISR).
+// Previously headers() forced all routes dynamic, blocking pre-rendering.
+export const revalidate = 3600;
+
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   // Note: siteInfo injection moved to section-specific layouts (/admin, /[locale])
   // where locale context is available for proper localization
-
-  // Get locale from proxy header
-  const headerStore = await headers();
-  const locale = headerStore.get('x-locale') || 'he';
-
-  // Set RTL direction for Hebrew and Arabic
-  const rtlLocales = ['he', 'ar'];
-  const dir = rtlLocales.includes(locale) ? 'rtl' : 'ltr';
 
   const siteInfo = await fetchSiteInfo().catch(() => null);
   const siteName = (siteInfo as any)?.name || 'Portfolio';
@@ -117,7 +112,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   };
 
   return (
-    <html dir={dir} lang={locale}>
+    <html dir="auto" lang="he">
       <head>
         <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
       </head>

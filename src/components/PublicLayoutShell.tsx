@@ -25,6 +25,14 @@ export default function PublicLayoutShell({ siteInfo, locale, resolvedLocale, ch
     }
   }, [siteInfo, setSiteInfo]);
 
+  // Set dir and lang on <html> — root layout uses dir="auto" to avoid
+  // headers() which blocks pre-rendering / ISR.
+  useEffect(() => {
+    const rtl = locale === 'he' || locale === 'ar';
+    document.documentElement.dir = rtl ? 'rtl' : 'ltr';
+    document.documentElement.lang = locale;
+  }, [locale]);
+
   return (
     <div className={styles.container}>
       <main className={styles.main}>{children}</main>
