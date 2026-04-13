@@ -44,8 +44,22 @@ export default function sitemap(): MetadataRoute.Sitemap {
     });
   }
 
-  // Note: /contact pages are intentional 308 redirects to /{locale}#contact
-  // and should NOT be in the sitemap.
+  // Contact pages
+  for (const locale of LOCALES) {
+    const languages: Record<string, string> = {};
+    for (const alt of LOCALES) {
+      languages[alt] = `${BASE_URL}/${alt}/contact`;
+    }
+    languages['x-default'] = `${BASE_URL}/he/contact`;
+
+    entries.push({
+      url: `${BASE_URL}/${locale}/contact`,
+      lastModified: CONTENT_LAST_MODIFIED,
+      changeFrequency: 'monthly',
+      priority: 0.5,
+      alternates: { languages },
+    });
+  }
 
   return entries;
 }
