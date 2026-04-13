@@ -4,7 +4,7 @@ const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://yaakov.aglamaz.com'
 const LOCALES = ['he', 'en', 'tr', 'ar'] as const;
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const now = new Date().toISOString();
+  const now = '2026-04-13';
 
   const entries: MetadataRoute.Sitemap = [];
 
