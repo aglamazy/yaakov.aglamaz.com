@@ -136,6 +136,10 @@ export default async function PublicLandingPage({
       />
       <PublicPage heroTitle={heroTitle} heroSubtitle={heroSubtitle} serverTranslations={serverTranslations} />
       <footer style={{ padding: '1rem', textAlign: 'center', fontSize: '0.875rem', color: '#6b7280' }}>
+        <Link href={`/${resolvedLocale}/contact`} style={{ textDecoration: 'underline' }}>
+          {t('publicPortfolio.contactTitle')}
+        </Link>
+        {' · '}
         <Link href={`/${resolvedLocale}/terms`} style={{ textDecoration: 'underline' }}>
           {getTranslation(resolvedLocale, 'termsAndConditions') as string || 'Terms & Conditions'}
         </Link>

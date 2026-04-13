@@ -87,6 +87,17 @@ export default async function ContactPage({
           <Link href={`/${resolvedLocale}`} style={{ textDecoration: 'underline' }}>
             ← {backLabel}
           </Link>
+          {' · '}
+          <Link href={`/${resolvedLocale}/terms`} style={{ textDecoration: 'underline' }}>
+            {getTranslation(resolvedLocale, 'termsAndConditions') || 'Terms'}
+          </Link>
+          {' · '}
+          {SUPPORTED_LOCALES.filter(l => l !== resolvedLocale).map((loc, i) => (
+            <span key={loc}>
+              {i > 0 && ' · '}
+              <Link href={`/${loc}/contact`}>{loc.toUpperCase()}</Link>
+            </span>
+          ))}
         </nav>
       </main>
     </>
