@@ -4,7 +4,7 @@ import I18nGate from '../components/I18nGate';
 import { fetchSiteInfo } from '../firebase/admin';
 import type { Metadata } from 'next';
 
-const GOOGLE_VERIFICATION = process.env.GOOGLE_SITE_VERIFICATION || process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION || '';
+const GOOGLE_VERIFICATION = (process.env.GOOGLE_SITE_VERIFICATION || process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION || '').trim();
 const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://yaakov.aglamaz.com';
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -22,9 +22,7 @@ export async function generateMetadata(): Promise<Metadata> {
       icons: {
         icon: '/favicon.svg',
       },
-      verification: {
-        google: GOOGLE_VERIFICATION,
-      },
+      ...(GOOGLE_VERIFICATION ? { verification: { google: GOOGLE_VERIFICATION } } : {}),
       openGraph: {
         type: 'website',
         siteName,
@@ -57,7 +55,7 @@ export async function generateMetadata(): Promise<Metadata> {
       title: 'Portfolio',
       description: 'Personal portfolio and professional profile',
       icons: { icon: '/favicon.svg' },
-      verification: { google: GOOGLE_VERIFICATION },
+      ...(GOOGLE_VERIFICATION ? { verification: { google: GOOGLE_VERIFICATION } } : {}),
       alternates: { canonical: '/he' },
       openGraph: {
         type: 'website',
