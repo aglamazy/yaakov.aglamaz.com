@@ -5,6 +5,8 @@ import TermsTr from '@/components/legal/TermsContent.tr';
 import TermsAr from '@/components/legal/TermsContent.ar';
 import { DEFAULT_LOCALE, SUPPORTED_LOCALES } from '@/i18n';
 
+export const revalidate = 3600;
+
 // Metadata (title, description, robots, alternates, OG, Twitter) is defined
 // in the sibling layout.tsx to avoid duplication and conflicting values.
 

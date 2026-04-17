@@ -2,6 +2,8 @@ import Link from 'next/link';
 import { DEFAULT_LOCALE, SUPPORTED_LOCALES, DEFAULT_RESOURCES } from '@/i18n';
 import { fetchSiteInfo } from '@/firebase/admin';
 
+export const revalidate = 3600;
+
 const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://yaakov.aglamaz.com';
 
 function getTranslation(locale: string, key: string): string {
