@@ -72,9 +72,10 @@ export async function middleware(request: NextRequest) {
   }
 
   const isApi = pathname.startsWith('/api');
+  const isPublicApi = pathname === '/api/seo/ping';
 
   if (!token) {
-    if (isApi) {
+    if (isApi && !isPublicApi) {
       return NextResponse.json({ error: 'Unauthorized (middleware)' }, { status: 401 });
     }
     return NextResponse.rewrite(new URL('/auth-gate', request.url));
