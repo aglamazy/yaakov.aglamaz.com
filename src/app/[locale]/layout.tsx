@@ -131,17 +131,23 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
     ],
   };
 
+  const isRtl = locale === 'he' || locale === 'ar';
   return (
-    <I18nProvider initialLocale={locale}>
-      <I18nGate>
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
-        />
-        <PublicLayoutShell siteInfo={siteInfo} locale={locale} resolvedLocale={resolvedLocale}>
-          {children}
-        </PublicLayoutShell>
-      </I18nGate>
-    </I18nProvider>
+    // Nested lang/dir on a wrapping element overrides the root <html lang>
+    // for this subtree — important for SEO when the root layout cannot be
+    // dynamic (which would break ISR / pre-rendering).
+    <div lang={locale} dir={isRtl ? 'rtl' : 'ltr'}>
+      <I18nProvider initialLocale={locale}>
+        <I18nGate>
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+          />
+          <PublicLayoutShell siteInfo={siteInfo} locale={locale} resolvedLocale={resolvedLocale}>
+            {children}
+          </PublicLayoutShell>
+        </I18nGate>
+      </I18nProvider>
+    </div>
   );
 }

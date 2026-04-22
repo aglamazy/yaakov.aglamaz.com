@@ -8,23 +8,26 @@ const nextConfig = {
   serverExternalPackages: ['firebase-admin'],
 
   async headers() {
+    // Per-locale Content-Language headers — search engines use this HTTP
+    // signal alongside hreflang and html lang to identify page language.
+    // Set per-locale here so it's reliable even when middleware doesn't run.
+    const localeContentLanguage = (locale) => [
+      { key: 'X-Robots-Tag', value: 'index, follow' },
+      { key: 'Vary', value: 'Accept-Language' },
+      { key: 'Content-Language', value: locale },
+    ];
+
     return [
-      {
-        // Public locale pages — signal crawlers to index and cache
-        source: '/:locale(he|en|tr|ar)/:path*',
-        headers: [
-          { key: 'X-Robots-Tag', value: 'index, follow' },
-          { key: 'Vary', value: 'Accept-Language' },
-        ],
-      },
-      {
-        // Locale root pages
-        source: '/:locale(he|en|tr|ar)',
-        headers: [
-          { key: 'X-Robots-Tag', value: 'index, follow' },
-          { key: 'Vary', value: 'Accept-Language' },
-        ],
-      },
+      // Locale root pages: /he, /en, /tr, /ar
+      { source: '/he', headers: localeContentLanguage('he') },
+      { source: '/en', headers: localeContentLanguage('en') },
+      { source: '/tr', headers: localeContentLanguage('tr') },
+      { source: '/ar', headers: localeContentLanguage('ar') },
+      // Locale subpages: /he/*, /en/*, /tr/*, /ar/*
+      { source: '/he/:path*', headers: localeContentLanguage('he') },
+      { source: '/en/:path*', headers: localeContentLanguage('en') },
+      { source: '/tr/:path*', headers: localeContentLanguage('tr') },
+      { source: '/ar/:path*', headers: localeContentLanguage('ar') },
       {
         // Sitemap — cache aggressively, easy for crawlers to fetch
         source: '/sitemap.xml',

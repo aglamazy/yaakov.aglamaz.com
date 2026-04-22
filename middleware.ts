@@ -37,6 +37,8 @@ function addLocaleHeader(response: NextResponse, request: NextRequest): NextResp
   }
   if (locale) {
     response.headers.set('x-locale', locale);
+    // Content-Language is a recognized HTTP signal for search engines.
+    response.headers.set('Content-Language', locale);
   }
   return response;
 }
