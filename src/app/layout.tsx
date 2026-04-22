@@ -95,17 +95,26 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const websiteJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
+    '@id': `${BASE_URL}/#website`,
     name: siteName,
     url: BASE_URL,
     inLanguage: ['he', 'en', 'tr', 'ar'],
+    publisher: { '@id': `${BASE_URL}/#organization` },
   };
 
   const organizationJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Organization',
+    '@id': `${BASE_URL}/#organization`,
     name: siteName,
     url: BASE_URL,
-    logo: `${BASE_URL}/favicon.svg`,
+    logo: {
+      '@type': 'ImageObject',
+      url: `${BASE_URL}/og-image.png`,
+      width: 1200,
+      height: 630,
+    },
+    image: `${BASE_URL}/og-image.png`,
     sameAs: [],
   };
 

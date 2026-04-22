@@ -115,18 +115,24 @@ export default async function PublicLandingPage({
     projectsList: getTranslation(resolvedLocale, 'publicPortfolio.projectsList') as Array<{ title: string; summary: string }>,
   };
 
+  const skillsList = (getTranslation(resolvedLocale, 'publicPortfolio.skillsList') as string[]) || [];
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'ProfilePage',
+    '@id': `${BASE_URL}/${resolvedLocale}#profilepage`,
     name: heroTitle,
     description: heroSubtitle,
     url: `${BASE_URL}/${resolvedLocale}`,
     inLanguage: resolvedLocale,
+    isPartOf: { '@id': `${BASE_URL}/#website` },
     mainEntity: {
       '@type': 'Person',
+      '@id': `${BASE_URL}/#person`,
       name: heroTitle,
       jobTitle: heroSubtitle,
       url: `${BASE_URL}/${resolvedLocale}`,
+      image: `${BASE_URL}/og-image.png`,
+      ...(Array.isArray(skillsList) && skillsList.length > 0 ? { knowsAbout: skillsList } : {}),
     },
   };
 
