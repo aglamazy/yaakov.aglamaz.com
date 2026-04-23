@@ -6,8 +6,9 @@ const LOCALES = ['he', 'en', 'tr', 'ar'] as const;
 export default function sitemap(): MetadataRoute.Sitemap {
   // Use a stable lastmod date — updating this on every build causes Google
   // to distrust lastmod values when the content hasn't actually changed.
-  // Bumped when structured data (Person/Organization schema) was enriched.
-  const CONTENT_LAST_MODIFIED = '2026-04-22';
+  // Bumped when discovery infrastructure was enhanced (automated IndexNow
+  // cron job added so search engines are re-notified daily).
+  const CONTENT_LAST_MODIFIED = '2026-04-23';
 
   const entries: MetadataRoute.Sitemap = [];
 

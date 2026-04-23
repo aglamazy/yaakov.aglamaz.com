@@ -18,10 +18,22 @@ function getAllSiteUrls(): string[] {
 export const dynamic = 'force-dynamic';
 
 export async function GET(req: NextRequest) {
-  const secret = req.headers.get('x-ping-secret') ?? req.nextUrl.searchParams.get('secret');
-  const pingSecret = process.env.PING_SECRET;
-  if (pingSecret && secret !== pingSecret) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  // Vercel Cron invocations carry user-agent: vercel-cron/1.0. If the
+  // CRON_SECRET env var is set, Vercel also signs the request with
+  // Authorization: Bearer <CRON_SECRET>. Treat either signal as pre-authorized
+  // so the scheduled job in vercel.json can run without PING_SECRET.
+  const userAgent = req.headers.get('user-agent') ?? '';
+  const isVercelCron =
+    userAgent.startsWith('vercel-cron/') ||
+    (process.env.CRON_SECRET !== undefined &&
+      req.headers.get('authorization') === `Bearer ${process.env.CRON_SECRET}`);
+
+  if (!isVercelCron) {
+    const secret = req.headers.get('x-ping-secret') ?? req.nextUrl.searchParams.get('secret');
+    const pingSecret = process.env.PING_SECRET;
+    if (pingSecret && secret !== pingSecret) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
   }
 
   const urls = getAllSiteUrls();
