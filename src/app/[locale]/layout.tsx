@@ -132,11 +132,17 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
   };
 
   const isRtl = locale === 'he' || locale === 'ar';
+  // Synchronous inline script updates <html lang/dir> to match the URL locale
+  // before the browser/crawler parses the rest of the body. The root layout's
+  // <html lang="he"> cannot be dynamic without breaking ISR, so for /en /tr /ar
+  // pages this corrects the document-level language signal that Google reads.
+  const syncHtmlLangScript = `(function(){var d=document.documentElement;d.lang=${JSON.stringify(locale)};d.dir=${JSON.stringify(isRtl ? 'rtl' : 'ltr')};})();`;
   return (
     // Nested lang/dir on a wrapping element overrides the root <html lang>
     // for this subtree — important for SEO when the root layout cannot be
     // dynamic (which would break ISR / pre-rendering).
     <div lang={locale} dir={isRtl ? 'rtl' : 'ltr'}>
+      <script dangerouslySetInnerHTML={{ __html: syncHtmlLangScript }} />
       <I18nProvider initialLocale={locale}>
         <I18nGate>
           <script
