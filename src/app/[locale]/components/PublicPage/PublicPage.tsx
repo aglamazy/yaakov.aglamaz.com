@@ -652,7 +652,11 @@ export default function PublicPage({ heroTitle, heroSubtitle, serverTranslations
             >
               <div className={styles.sectionInner}>
                 {isHero ? <span className={styles.heroBubble} aria-hidden="true" /> : null}
-                <h2 className={index === 0 ? styles.heroTitle : styles.sectionTitle}>{title}</h2>
+                {isHero ? (
+                  <h1 className={styles.heroTitle}>{title}</h1>
+                ) : (
+                  <h2 className={styles.sectionTitle}>{title}</h2>
+                )}
                 <p className={styles.sectionBody}>{body}</p>
 
                 {section.id === 'skills' ? (
