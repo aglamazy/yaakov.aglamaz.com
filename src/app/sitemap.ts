@@ -6,9 +6,9 @@ const LOCALES = ['he', 'en', 'tr', 'ar'] as const;
 export default function sitemap(): MetadataRoute.Sitemap {
   // Use a stable lastmod date — updating this on every build causes Google
   // to distrust lastmod values when the content hasn't actually changed.
-  // Bumped when per-locale <html lang> correction was added so non-Hebrew
-  // pages send the right document-language signal to crawlers.
-  const CONTENT_LAST_MODIFIED = '2026-04-27';
+  // Bumped when HTTP Link headers (RFC 5988) were added for hreflang and
+  // sitemap discovery — a real signal change worth advertising via lastmod.
+  const CONTENT_LAST_MODIFIED = '2026-04-28';
 
   const entries: MetadataRoute.Sitemap = [];
 
