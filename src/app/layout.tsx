@@ -3,6 +3,7 @@ import I18nProvider from '../components/I18nProvider';
 import I18nGate from '../components/I18nGate';
 import { fetchSiteInfo } from '../firebase/admin';
 import type { Metadata } from 'next';
+import { Analytics } from '@vercel/analytics/react';
 
 const GOOGLE_VERIFICATION = (process.env.GOOGLE_SITE_VERIFICATION || process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION || '').trim();
 const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://yaakov.aglamaz.com';
@@ -133,6 +134,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
         />
         {children}
+        <Analytics />
       </body>
     </html>
   );
