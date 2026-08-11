@@ -13,6 +13,12 @@
 #                             #develop, #feat/…) instead of a tag or SHA
 #   3. npx lint-staged      — eslint/prettier on staged files (per repo's .lintstagedrc / package.json#lint-staged)
 #   4. npx tsc --noEmit     — only if a top-level tsconfig.json exists
+#   5. version bump         — Importa-style yy.mm.# bump of package.json (+ lock),
+#                             then re-stage so the bump rides this commit. The
+#                             bumper (scripts/bump-version.cjs) and the merge
+#                             driver (.githooks/merge-higher-version.cjs +
+#                             .gitattributes + git config) are also owned by Ant
+#                             and propagated by ant_husky_sync.py.
 
 set -e
 
@@ -101,6 +107,21 @@ if [ -f tsconfig.json ]; then
     echo "[ant pre-commit] tsc --noEmit failed — aborting." >&2
     exit 1
   }
+fi
+
+# 5. Auto-bump package version before commit so version changes are captured.
+#    Mirrors ~/develop/Importa/importa-server: yy.mm.# via scripts/bump-version.cjs,
+#    then re-stage package.json + lockfile so the bump is part of THIS commit
+#    (and a repeated bump isn't generated on the next one).
+#    NOTE: the bumper is .cjs (forced CommonJS) because most agents-* repos set
+#    "type":"module" in package.json — a plain .js with require()/__dirname
+#    crashes there with "require is not defined in ES module scope".
+if [ -f package.json ] && [ -f scripts/bump-version.cjs ] && command -v node >/dev/null 2>&1; then
+  node scripts/bump-version.cjs || {
+    echo "[ant pre-commit] version bump failed — aborting." >&2
+    exit 1
+  }
+  git add package.json package-lock.json 2>/dev/null || true
 fi
 
 exit 0
