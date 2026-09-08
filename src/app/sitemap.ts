@@ -6,9 +6,11 @@ const LOCALES = ['he', 'en', 'tr', 'ar'] as const;
 export default function sitemap(): MetadataRoute.Sitemap {
   // Use a stable lastmod date — updating this on every build causes Google
   // to distrust lastmod values when the content hasn't actually changed.
-  // Bumped when HTTP Link headers (RFC 5988) were added for hreflang and
-  // sitemap discovery — a real signal change worth advertising via lastmod.
-  const CONTENT_LAST_MODIFIED = '2026-04-28';
+  // Bumped when a real signal change ships and worth advertising via lastmod.
+  // 2026-07-14: refreshed to re-trigger a crawl of the locale/terms/contact
+  // URLs still reported "unknown to Google" (deploy carries analytics + head
+  // signal changes — a genuine content-level change, not a no-op build bump).
+  const CONTENT_LAST_MODIFIED = '2026-07-14';
 
   const entries: MetadataRoute.Sitemap = [];
 
